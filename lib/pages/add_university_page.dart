@@ -17,18 +17,12 @@ class AddUniversityPage extends StatefulWidget {
 }
 
 class _AddUniversityPageState extends State<AddUniversityPage> {
-  String defaultImageUrl =
-      'https://cdn.pixabay.com/photo/2016/03/23/15/00/ice-cream-1274894_1280.jpg';
   String selectedFile = '';
-  XFile? file;
   Uint8List? selectedImageInBytes;
-  List<Uint8List> pickedImagesInBytes = [];
-  List<String> imageUrls = [];
-  int imageCounts = 0;
+  String imageUrl = '';
   TextEditingController _itemNameController = TextEditingController();
   TextEditingController _descriptionController = TextEditingController();
   TextEditingController _UniversityphoneController = TextEditingController();
-  TextEditingController _deviceTokenController = TextEditingController();
   bool isItemSaved = false;
 
   @override
@@ -44,77 +38,19 @@ class _AddUniversityPageState extends State<AddUniversityPage> {
     super.dispose();
   }
 
-  //This modal shows image selection either from gallery or camera
-  void _showPicker(BuildContext context) {
-    showModalBottomSheet(
-      //backgroundColor: Colors.transparent,
-      context: context,
-      builder: (BuildContext bc) {
-        return SafeArea(
-          child: Container(
-            height: MediaQuery.of(context).size.height * 0.15,
-            decoration: const BoxDecoration(
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(25),
-                topRight: Radius.circular(25),
-              ),
-            ),
-            child: Wrap(
-              children: <Widget>[
-                SizedBox(
-                  height: 10,
-                ),
-                ListTile(
-                    leading: const Icon(
-                      Icons.photo_library,
-                    ),
-                    title: const Text(
-                      'Gallery',
-                      style: TextStyle(),
-                    ),
-                    onTap: () {
-                      _selectFile(true);
-                      Navigator.of(context).pop();
-                    }),
-                ListTile(
-                  leading: const Icon(
-                    Icons.photo_camera,
-                  ),
-                  title: const Text(
-                    'Camera',
-                    style: TextStyle(),
-                  ),
-                  onTap: () {
-                    _selectFile(false);
-                    Navigator.of(context).pop();
-                  },
-                ),
-              ],
-            ),
-          ),
-        );
-      },
-    );
-  }
-
   _selectFile(bool imageFrom) async {
-    FilePickerResult? fileResult =
-    await FilePicker.platform.pickFiles(allowMultiple: true);
+    FilePickerResult? fileResult = await FilePicker.platform.pickFiles();
 
     if (fileResult != null) {
       selectedFile = fileResult.files.first.name;
-      fileResult.files.forEach((element) {
-        setState(() {
-          pickedImagesInBytes.add(element.bytes!);
-          //selectedImageInBytes = fileResult.files.first.bytes;
-          imageCounts += 1;
-        });
+      setState(() {
+        selectedImageInBytes = fileResult.files.first.bytes;
       });
     }
     print(selectedFile);
   }
 
-  Future<String> _uploadFile() async {
+  Future<String> _uploadImage(String itemName) async {
     String imageUrl = '';
     try {
       firabase_storage.UploadTask uploadTask;
@@ -122,46 +58,18 @@ class _AddUniversityPageState extends State<AddUniversityPage> {
       firabase_storage.Reference ref = firabase_storage.FirebaseStorage.instance
           .ref()
           .child('Universities')
-          .child('/' + selectedFile);
+          .child('/' + itemName + '_' + DateTime.now().toIso8601String());
 
       final metadata =
-      firabase_storage.SettableMetadata(contentType: 'image/jpeg');
+          firabase_storage.SettableMetadata(contentType: 'image/jpeg');
 
       //uploadTask = ref.putFile(File(file.path));
       uploadTask = ref.putData(selectedImageInBytes!, metadata);
-
       await uploadTask.whenComplete(() => null);
       imageUrl = await ref.getDownloadURL();
-    } catch (e) {
-      print(e);
-    }
-    return imageUrl;
-  }
-
-  Future<String> _uploadMultipleFiles(String itemName) async {
-    String imageUrl = '';
-    try {
-      for (var i = 0; i < imageCounts; i++) {
-        firabase_storage.UploadTask uploadTask;
-
-        firabase_storage.Reference ref = firabase_storage
-            .FirebaseStorage.instance
-            .ref()
-            .child('Universities')
-            .child('/' + itemName + '_' + i.toString());
-
-        final metadata =
-        firabase_storage.SettableMetadata(contentType: 'image/jpeg');
-
-        //uploadTask = ref.putFile(File(file.path));
-        uploadTask = ref.putData(pickedImagesInBytes[i], metadata);
-
-        await uploadTask.whenComplete(() => null);
-        imageUrl = await ref.getDownloadURL();
-        setState(() {
-          imageUrls.add(imageUrl);
-        });
-      }
+      setState(() {
+        this.imageUrl = imageUrl;
+      });
     } catch (e) {
       print(e);
     }
@@ -172,65 +80,24 @@ class _AddUniversityPageState extends State<AddUniversityPage> {
     setState(() {
       isItemSaved = true;
     });
-    //String imageUrl = await _uploadFile();
-    await _uploadMultipleFiles(_itemNameController.text);
-    print('Uploaded Image URL ' + imageUrls.length.toString());
+
+    await _uploadImage(_itemNameController.text);
     await FirebaseFirestore.instance.collection('Universities').add({
       'description': _descriptionController.text,
-      'itemName': _itemNameController.text,
-      'itemPrice': _UniversityphoneController.text,
-      'Image': imageUrls,
-
+      'name': _itemNameController.text,
+      'phone': _UniversityphoneController.text,
+      'Image': imageUrl,
       'createdOn': DateTime.now().toIso8601String(),
     }).then((value) {
       setState(() {
         isItemSaved = false;
       });
-
     });
-  }
-
-  String constructFCMPayload(String token) {
-    return jsonEncode({
-      'to': token,
-      'data': {
-        'via': 'FlutterFire Cloud Messaging!!!',
-      },
-      'notification': {
-        'title':
-        'Your item  ${_itemNameController.text} is added successfully !',
-        'body': 'Please subscribe, like and share this tutorial !',
-      },
-    });
-  }
-
-  Future<void> sendPushMessage() async {
-    if (_deviceTokenController.text == null) {
-      print('Unable to send FCM message, no token exists.');
-      return;
-    }
-
-    try {
-      String serverKey =
-          "AAAA0RJf2UE:APA91bE_M-axKmqqoV5EinizvWP4T9bOkmCXAwU8JPFCEQsVCZXBdgsX2Nq_coDtvo49ULywfLtzorKS0TlB-1LxNQhFZRBrbk6hcoD0fgHy-i3ed0ehx7yDaHxYLzjXAt7vO2XDMIBD";
-      await http.post(
-        Uri.parse('https://fcm.googleapis.com/fcm/send'),
-        headers: <String, String>{
-          'Content-Type': 'application/json; charset=UTF-8',
-          'Authorization': 'key=$serverKey'
-        },
-        body: constructFCMPayload(_deviceTokenController.text),
-      );
-      print('FCM request for device sent!');
-    } catch (e) {
-      print(e);
-    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-
       body: SingleChildScrollView(
         child: Center(
           child: Column(
@@ -240,7 +107,26 @@ class _AddUniversityPageState extends State<AddUniversityPage> {
               SizedBox(
                 height: MediaQuery.of(context).size.height * 0.02,
               ),
-              Container(
+              if (selectedFile.isEmpty)
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Container(
+                      width: 100,
+                      height: 100,
+                      decoration: BoxDecoration(
+                        color: Colors.grey[300],
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Icon(
+                        Icons.add_a_photo,
+                        size: 50,
+                      ),
+                    ),
+                  ],
+                ),
+              if (selectedFile.isNotEmpty)
+                Container(
                   height: MediaQuery.of(context).size.height * 0.35,
                   width: MediaQuery.of(context).size.width * 0.3,
                   decoration: BoxDecoration(
@@ -248,35 +134,10 @@ class _AddUniversityPageState extends State<AddUniversityPage> {
                       15,
                     ),
                   ),
-                  child: selectedFile.isEmpty
-                      ? Image.network(
-                    defaultImageUrl,
-                    fit: BoxFit.cover,
-                  )
-                  // Image.asset('assets/create_menu_default.png')
-                      : CarouselSlider(
-                    options: CarouselOptions(height: 400.0),
-                    items: pickedImagesInBytes.map((i) {
-                      return Builder(
-                        builder: (BuildContext context) {
-                          return Container(
-                            width: MediaQuery.of(context).size.width,
-                            margin: EdgeInsets.symmetric(horizontal: 5.0),
-                            decoration:
-                            BoxDecoration(color: Colors.amber),
-                            child: Image.memory(i),
-                          );
-                        },
-                      );
-                    }).toList(),
-                  )
-                //Image.memory(selectedImageInBytes)
-
-                // Image.file(
-                //     File(file.path),
-                //     fit: BoxFit.fill,
-                //   ),
-              ),
+                  child: Container(
+                    child: Image.memory(selectedImageInBytes!),
+                  ),
+                ),
               SizedBox(
                 height: MediaQuery.of(context).size.height * 0.02,
               ),
@@ -284,11 +145,10 @@ class _AddUniversityPageState extends State<AddUniversityPage> {
                 height: MediaQuery.of(context).size.height * 0.05,
                 child: ElevatedButton.icon(
                   onPressed: () {
-                    //_showPicker(context);
                     _selectFile(true);
                   },
                   icon: const Icon(
-                    Icons.camera,
+                    Icons.add_a_photo,
                   ),
                   label: const Text(
                     'Pick Image',
@@ -347,7 +207,6 @@ class _AddUniversityPageState extends State<AddUniversityPage> {
               ),
               SizedBox(
                 height: MediaQuery.of(context).size.height * 0.02,
-
               ),
               Container(
                 height: MediaQuery.of(context).size.height * 0.1,
@@ -391,7 +250,6 @@ class _AddUniversityPageState extends State<AddUniversityPage> {
               ),
               SizedBox(
                 height: MediaQuery.of(context).size.height * 0.02,
-
               ),
               Container(
                 height: MediaQuery.of(context).size.height * 0.1,
@@ -468,7 +326,6 @@ class _AddUniversityPageState extends State<AddUniversityPage> {
           ),
         ),
       ),
-
     );
   }
 }
