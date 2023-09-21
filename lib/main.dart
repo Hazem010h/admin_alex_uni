@@ -2,6 +2,8 @@ import 'package:admin_alex_uni/pages/layout_page.dart';
 import 'package:bloc/bloc.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'cubit/app_cubit.dart';
 import 'cubit/bloc_observer.dart';
 import 'firebase_options.dart';
 
@@ -20,9 +22,12 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: LayoutPage(),
+    return BlocProvider(
+      create: (context) => AppCubit(),
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        home: LayoutPage(),
+      ),
     );
   }
 }

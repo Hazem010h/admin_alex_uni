@@ -17,3 +17,14 @@ class CreateUniversityErrorState extends AppStates {
 class PickImageSuccessState extends AppStates {}
 class PickImageLoadingState extends AppStates {}
 class PickImageErrorState extends AppStates {}
+
+class CreateDepartmentLoadingState extends AppStates {}
+class CreateDepartmentSuccessState extends AppStates {}
+
+class GetUniversitiesLoadingState extends AppStates {}
+class GetUniversitiesSuccessState extends AppStates {}
+class GetUniversitiesErrorState extends AppStates {
+  final String error;
+
+  GetUniversitiesErrorState(this.error);
+}

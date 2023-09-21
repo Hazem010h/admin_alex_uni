@@ -21,33 +21,23 @@ class LayoutPage extends StatelessWidget {
             appBar: AppBar(
               title: const Text('Layout Page'),
             ),
-            body: Row(
-              children: [
-                NavigationRail(
-                  elevation: 5,
-                  labelType: NavigationRailLabelType.all,
-                  destinations: const [
-                    NavigationRailDestination(
-                      icon: Icon(Icons.add),
-                      selectedIcon: Icon(Icons.add),
-                      label: Text('Add University'),
-                    ),
-                    NavigationRailDestination(
-                      icon: Icon(Icons.add),
-                      selectedIcon: Icon(Icons.add),
-                      label: Text('Add Department'),
-                    ),
-                  ],
-                  selectedIndex: cubit.currentIndex,
-                  onDestinationSelected: (index) {
-                    cubit.changeNavBar(index);
-                  },
+            body: cubit.screens[cubit.currentIndex],
+            bottomNavigationBar: BottomNavigationBar(
+              currentIndex: cubit.currentIndex,
+              onTap: (index) {
+                cubit.changeNavBar(index);
+              },
+              items: const [
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.add),
+                  label: 'University',
                 ),
-                Expanded(
-                  child: cubit.screens[cubit.currentIndex],
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.add),
+                  label: 'Department',
                 ),
               ],
-            ),
+            )
           );
         },
       ),
