@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:admin_alex_uni/cubit/app_states.dart';
 import 'package:admin_alex_uni/models/university_model.dart';
+import 'package:admin_alex_uni/pages/add_admin_screen.dart';
 import 'package:admin_alex_uni/pages/add_department_screen.dart';
 import 'package:admin_alex_uni/pages/add_university_screen.dart';
 import 'package:bloc/bloc.dart';
@@ -12,22 +13,26 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:image_picker/image_picker.dart';
 
+import '../models/admin_model.dart';
 import '../models/department_model.dart';
 
 
 class AppCubit extends Cubit<AppStates>{
   AppCubit() : super(AppInitialState()){
     getUniversities();
+
   }
 
   static AppCubit get(context) => BlocProvider.of(context);
 
   int currentIndex = 0;
   UniversityModel? currentSelectedUniversity=null;
+  DepartmentModel? currentSelectedDepartment=null;
 
   List<Widget> screens = [
     AddUniversityScreen(),
     AddDepartmentScreen(),
+    AddAdminScreen()
   ];
 
   changeNavBar(int index)async{
@@ -99,6 +104,7 @@ class AppCubit extends Cubit<AppStates>{
       emit(GetUniversitiesErrorState(onError.toString()));
     });
   }
+  
 
   createDepartment({
     required String name,
@@ -123,5 +129,112 @@ class AppCubit extends Cubit<AppStates>{
       emit(CreateDepartmentSuccessState());
     });
   }
+  // List<DepartmentModel> departments = [];
+  // void getDepartments() {
+  //   if (currentSelectedUniversity == null) {
+  //
+  //
+  //     // No university selected, so return an empty list of departments.
+  //     emit(GetDepartmentsLoadingState());
+  //     return;
+  //   }
+  //   if(currentSelectedUniversity!.uId==null){
+  //     emit(GetDepartmentsLoadingState());
+  //     return;
+  //   }
+  //   departments = [];
+  //
+  //
+  //
+  //   emit(GetDepartmentsLoadingState());
+  //
+  //
+  //   FirebaseFirestore.instance
+  //       .collection('Universities')
+  //       .doc(currentSelectedUniversity!.uId)
+  //       .collection('Departments')
+  //       .orderBy('name')
+  //       .get()
+  //       .then((value) {
+  //
+  //
+  //
+  //
+  //     value.docs.forEach((element) {
+  //
+  //       DepartmentModel currentDepartment =
+  //       DepartmentModel.fromJson(element.data());
+  //
+  //       currentDepartment.id = element.id;
+  //       departments.add(currentDepartment);
+  //     });
+  //     currentSelectedDepartment = departments[0]??null;
+  //     emit(GetDepartmentsSuccessState());
+  //   }).catchError((onError) {
+  //     emit(GetDepartmentsErrorState(onError.toString()));
+  //   });
+  // }
+  List<DepartmentModel> departments = [];
+  void displaydepartments(){
+    currentSelectedDepartment=null;
+    departments = [];
 
+    emit(GetDepartmentsLoadingState());
+    FirebaseFirestore.instance
+        .collection('Universities')
+        .doc(currentSelectedUniversity!.uId)
+        .collection('Departments')
+        .orderBy('name')
+        .get()
+        .then((value) {
+      value.docs.forEach((element) {
+        DepartmentModel currentDepartment =
+        DepartmentModel.fromJson(element.data());
+        currentDepartment.id = element.id;
+        departments.add(currentDepartment);
+
+
+      });
+
+
+      emit(GetDepartmentsSuccessState());
+    }).catchError((onError) {
+      emit(GetDepartmentsErrorState(onError.toString()));
+    });
+  }
+
+
+  createAdmin({
+    required String name,
+    required String password,
+    required String phone,
+    required String email,
+    required bool underGraduate,
+    required bool postGraduate,
+
+
+
+  }) {
+    emit(CreateAdminLoadingState());
+
+    AdminModel adminModel = AdminModel(
+      name: name,
+      password: password,
+      phone: phone,
+      email: email,
+      universityId: currentSelectedUniversity!.uId,
+      departmentId: currentSelectedDepartment!.id,
+      underGraduate: underGraduate,
+      postGraduate: postGraduate,
+    );
+
+    FirebaseFirestore.instance
+        .collection('Admins')
+        .add(adminModel.toMap())
+        .then((value) {
+      emit(CreateAdminSuccessState());
+    });
+
+
+  }
 }

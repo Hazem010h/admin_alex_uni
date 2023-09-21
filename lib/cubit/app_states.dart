@@ -28,3 +28,17 @@ class GetUniversitiesErrorState extends AppStates {
 
   GetUniversitiesErrorState(this.error);
 }
+
+class GetDepartmentsLoadingState extends AppStates {}
+class GetDepartmentsSuccessState extends AppStates {}
+class GetDepartmentsErrorState extends AppStates {
+  final String error;
+
+  GetDepartmentsErrorState(this.error);
+}
+
+
+
+class CreateAdminLoadingState extends AppStates {}
+class CreateAdminSuccessState extends AppStates {}
+class CreateAdminErrorState extends AppStates {}
