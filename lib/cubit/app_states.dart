@@ -42,3 +42,14 @@ class GetDepartmentsErrorState extends AppStates {
 class CreateAdminLoadingState extends AppStates {}
 class CreateAdminSuccessState extends AppStates {}
 class CreateAdminErrorState extends AppStates {}
+
+class AdminRegesterLoadingState extends AppStates {}
+class AdminRegesterSuccessState extends AppStates {
+  final String uId;
+  AdminRegesterSuccessState(this.uId);
+}
+class AdminRegesterErrorState extends AppStates {
+  final String error;
+
+  AdminRegesterErrorState({required this.error});
+}

@@ -36,10 +36,7 @@ class LayoutPage extends StatelessWidget {
                   icon: Icon(Icons.add),
                   label: 'Department',
                 ),
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.add),
-                  label: 'Admin',
-                ),
+
               ],
             )
           );

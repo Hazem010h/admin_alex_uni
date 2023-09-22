@@ -37,20 +37,20 @@ class _AddUniversityScreenState extends State<AddUniversityScreen> {
                         : Theme.of(context).scaffoldBackgroundColor,
                     child: cubit.image == null
                         ? IconButton(
-                            onPressed: () {
-                              cubit.pickImage();
-                            },
-                            icon: Icon(
-                              Icons.add_a_photo,
-                              color: Colors.black,
-                              size: MediaQuery.of(context).size.width * 0.1,
-                            ),
-                          )
+                      onPressed: () {
+                        cubit.pickImage();
+                      },
+                      icon: Icon(
+                        Icons.add_a_photo,
+                        color: Colors.black,
+                        size: MediaQuery.of(context).size.width * 0.1,
+                      ),
+                    )
                         : Image.file(
-                            cubit.image!,
-                            width: MediaQuery.of(context).size.width * 0.3,
-                            height: MediaQuery.of(context).size.width * 0.3,
-                          ),
+                      cubit.image!,
+                      width: MediaQuery.of(context).size.width * 0.3,
+                      height: MediaQuery.of(context).size.width * 0.3,
+                    ),
                   ),
                   SizedBox(
                     height: 10.0,

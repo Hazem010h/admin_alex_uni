@@ -6,6 +6,7 @@ import 'package:admin_alex_uni/pages/add_admin_screen.dart';
 import 'package:admin_alex_uni/pages/add_department_screen.dart';
 import 'package:admin_alex_uni/pages/add_university_screen.dart';
 import 'package:bloc/bloc.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart'as firebase_storage;
 
 import 'package:flutter/material.dart';
@@ -13,6 +14,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:image_picker/image_picker.dart';
 
+import '../constants.dart';
 import '../models/admin_model.dart';
 import '../models/department_model.dart';
 
@@ -32,7 +34,7 @@ class AppCubit extends Cubit<AppStates>{
   List<Widget> screens = [
     AddUniversityScreen(),
     AddDepartmentScreen(),
-    AddAdminScreen()
+
   ];
 
   changeNavBar(int index)async{
@@ -203,6 +205,46 @@ class AppCubit extends Cubit<AppStates>{
     });
   }
 
+  void AdminRegester({
+    required String name,
+    required String password,
+    required String phone,
+    required String email,
+    required bool underGraduate,
+    required bool postGraduate,
+}){
+    emit(AdminRegesterLoadingState());
+    FirebaseAuth.instance
+        .createUserWithEmailAndPassword(
+      email: email,
+      password: password,
+    )
+        .then((value) {
+      uId= value.user!.uid;
+      createAdmin(
+        name: name,
+        email: email,
+        phone: phone,
+        password: password,
+        underGraduate: underGraduate,
+        postGraduate: postGraduate,
+      );
+      emit(AdminRegesterSuccessState(value.user!.uid));
+    }).catchError((error) {
+      if (error is FirebaseAuthException) {
+        if (error.code == 'weak-password') {
+          emit(AdminRegesterErrorState( error: 'كلمه السر ضعيفه',));
+        } else if (error.code == 'email-already-in-use') {
+          emit(AdminRegesterErrorState(error: 'هذا البريد الالكتروني مسجل بالفعل'));
+        } else {
+          emit(AdminRegesterErrorState(error: 'حدث خطأ ما,حاول مره اخري'));
+        }
+      } else {
+        emit(AdminRegesterErrorState(error: 'An error occurred: $error'));
+      }
+    });
+  }
+
 
   createAdmin({
     required String name,
@@ -211,9 +253,6 @@ class AppCubit extends Cubit<AppStates>{
     required String email,
     required bool underGraduate,
     required bool postGraduate,
-
-
-
   }) {
     emit(CreateAdminLoadingState());
 
@@ -227,6 +266,9 @@ class AppCubit extends Cubit<AppStates>{
       underGraduate: underGraduate,
       postGraduate: postGraduate,
     );
+    emit(CreateAdminLoadingState());
+
+
 
     FirebaseFirestore.instance
         .collection('Admins')
@@ -234,7 +276,18 @@ class AppCubit extends Cubit<AppStates>{
         .then((value) {
       emit(CreateAdminSuccessState());
     });
+    // Get a reference to the department within the university
+    DocumentReference departmentRef = FirebaseFirestore.instance
+        .collection('Universities')
+        .doc(currentSelectedUniversity!.uId)
+        .collection('Departments')
+        .doc(currentSelectedDepartment!.id);
 
-
+    // Add the admin to the department's subcollection
+    departmentRef.collection('Admins').add(adminModel.toMap()).then((value) {
+      emit(CreateAdminSuccessState());
+    });
   }
+
+
 }

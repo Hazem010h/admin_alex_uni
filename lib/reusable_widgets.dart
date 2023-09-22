@@ -1,3 +1,4 @@
+import 'package:another_flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 
 
@@ -134,24 +135,26 @@ void printFullText(String text)
   pattern.allMatches(text).forEach((match)=>print(match.group(0)));
 }
 
-// Widget showFlushBar({
-//   required BuildContext context,
-//   required String message,
-// })=> Flushbar(
-//   message: message,
-//   icon: Icon(
-//     Icons.info_outline,
-//     size: 28.0,
-//     color: Colors.blue[300],
-//   ),
-//   margin: EdgeInsets.all(6.0),
-//   flushbarStyle: FlushbarStyle.FLOATING,
-//   flushbarPosition: FlushbarPosition.TOP,
-//   textDirection: Directionality.of(context),
-//   borderRadius: BorderRadius.circular(12),
-//   duration: Duration(seconds: 3),
-//   leftBarIndicatorColor: Colors.blue[300],
-// )..show(context);
+Widget showFlushBar({
+  required BuildContext context,
+  required String message,
+})=> Flushbar(
+  message: message,
+  icon: Icon(
+    Icons.info_outline,
+    size: 28.0,
+    color: Colors.blue[300],
+  ),
+  margin: EdgeInsets.all(6.0),
+  flushbarStyle: FlushbarStyle.FLOATING,
+  flushbarPosition: FlushbarPosition.TOP,
+  textDirection: Directionality.of(context),
+  borderRadius: BorderRadius.circular(12),
+  duration: Duration(seconds: 3),
+  leftBarIndicatorColor: Colors.blue[300],
+)..show(context);
+
+
 
 PreferredSizeWidget defaultappbar({
   required BuildContext context,
