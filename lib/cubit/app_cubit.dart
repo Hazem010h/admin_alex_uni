@@ -112,6 +112,8 @@ class AppCubit extends Cubit<AppStates>{
     required String name,
     required bool underGraduate,
     required bool postGraduate,
+    required String departmentImage,
+    required String description,
   }) {
     emit(CreateDepartmentLoadingState());
 
@@ -120,6 +122,9 @@ class AppCubit extends Cubit<AppStates>{
       universityId: currentSelectedUniversity!.uId,
       underGraduate: underGraduate,
       postGraduate: postGraduate,
+      departmentImage: departmentImage,
+      description: description,
+
     );
 
     FirebaseFirestore.instance
@@ -131,51 +136,7 @@ class AppCubit extends Cubit<AppStates>{
       emit(CreateDepartmentSuccessState());
     });
   }
-  // List<DepartmentModel> departments = [];
-  // void getDepartments() {
-  //   if (currentSelectedUniversity == null) {
-  //
-  //
-  //     // No university selected, so return an empty list of departments.
-  //     emit(GetDepartmentsLoadingState());
-  //     return;
-  //   }
-  //   if(currentSelectedUniversity!.uId==null){
-  //     emit(GetDepartmentsLoadingState());
-  //     return;
-  //   }
-  //   departments = [];
-  //
-  //
-  //
-  //   emit(GetDepartmentsLoadingState());
-  //
-  //
-  //   FirebaseFirestore.instance
-  //       .collection('Universities')
-  //       .doc(currentSelectedUniversity!.uId)
-  //       .collection('Departments')
-  //       .orderBy('name')
-  //       .get()
-  //       .then((value) {
-  //
-  //
-  //
-  //
-  //     value.docs.forEach((element) {
-  //
-  //       DepartmentModel currentDepartment =
-  //       DepartmentModel.fromJson(element.data());
-  //
-  //       currentDepartment.id = element.id;
-  //       departments.add(currentDepartment);
-  //     });
-  //     currentSelectedDepartment = departments[0]??null;
-  //     emit(GetDepartmentsSuccessState());
-  //   }).catchError((onError) {
-  //     emit(GetDepartmentsErrorState(onError.toString()));
-  //   });
-  // }
+
   List<DepartmentModel> departments = [];
   void displaydepartments(){
     currentSelectedDepartment=null;

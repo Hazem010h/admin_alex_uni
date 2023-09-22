@@ -15,6 +15,7 @@ class AddDepartmentScreen extends StatefulWidget {
 
 class _AddDepartmentScreenState extends State<AddDepartmentScreen> {
   TextEditingController nameController = TextEditingController();
+  TextEditingController departmentController = TextEditingController();
   bool isUploading = false;
   bool error = false;
   bool underGraduateCheckbox = false;
@@ -165,6 +166,26 @@ class _AddDepartmentScreenState extends State<AddDepartmentScreen> {
                   SizedBox(
                     height: 10.0,
                   ),
+                  Row(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                        child: Text(
+                          'Department description',
+                          style: TextStyle(
+                            fontSize: 16.0,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  reusableTextFormField(
+                    label: 'Department description',
+                    onTap: () {},
+                    controller: departmentController,
+                    keyboardType: TextInputType.text,
+                  ),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 8.0),
                     child: Row(
@@ -218,29 +239,34 @@ class _AddDepartmentScreenState extends State<AddDepartmentScreen> {
                               if (cubit.image != null &&
                                   nameController.text.isNotEmpty &&
                                   cubit.currentSelectedUniversity != null &&
-                                  (underGraduateCheckbox || postGraduateCheckbox)
+                                  (underGraduateCheckbox || postGraduateCheckbox) && departmentController.text.isNotEmpty
                               ) {
                                 setState(() {
                                   isUploading = true;
                                 });
                                 cubit.uploadImage().then((value) {
-                                  cubit
-                                      .createDepartment(
+                                  cubit.createDepartment(
+                                    departmentImage: cubit.uploadedImageLink,
                                     name: nameController.text,
                                     underGraduate: underGraduateCheckbox,
                                     postGraduate: postGraduateCheckbox,
+                                    description: departmentController.text,
                                   )
                                       .then((value) {
                                     cubit.image = null;
                                     nameController.clear();
+                                    departmentController.clear();
                                     isUploading = false;
                                     setState(() {
                                       cubit.image;
                                       nameController;
+                                      departmentController;
                                       isUploading;
                                     });
                                   });
                                 });
+
+
                               } else {
                                 setState(() {
                                   error = true;
@@ -261,6 +287,7 @@ class _AddDepartmentScreenState extends State<AddDepartmentScreen> {
                               setState(() {
                                 cubit.image = null;
                                 nameController.clear();
+                                departmentController.clear();
                               });
                             },
                           ),
