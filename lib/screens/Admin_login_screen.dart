@@ -1,15 +1,14 @@
-
 import 'package:admin_alex_uni/cubit/admin_login_cubit.dart';
-import 'package:admin_alex_uni/pages/add_admin_screen.dart';
-import 'package:admin_alex_uni/pages/add_university_screen.dart';
-import 'package:admin_alex_uni/pages/layout_page.dart';
+import 'package:admin_alex_uni/cubit/app_cubit.dart';
 import 'package:conditional_builder_null_safety/conditional_builder_null_safety.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
 import '../cache_helper.dart';
 import '../constants.dart';
 import '../reusable_widgets.dart';
+import 'add_admin_screen.dart';
+import 'add_university_screen.dart';
+import 'layout_page.dart';
 
 class AdminloginScreen extends StatefulWidget {
   const AdminloginScreen({Key? key}) : super(key: key);
@@ -34,16 +33,17 @@ class _AdminloginScreenState extends State<AdminloginScreen> {
     return BlocProvider(
       create: (BuildContext context) => AdminLoginCubit(),
       child: BlocConsumer<AdminLoginCubit, AdminLoginState>(
-        listener: (context, state)  {
+        listener: (context, state)  async {
           if (state is LoginSuccessState) {
+            uId = state.uId;
+            await AppCubit.get(context).getAdminData();
             CacheHelper.saveData(key: 'uId', value: uId).then((value){
               isGuest = false;
               navigateAndFinish(
                 context: context,
-                screen:  LayoutPage(),
+                screen:  LayoutScreen(),
               );
             });
-
           }
           if (state is LoginErrorState) {
             showFlushBar(

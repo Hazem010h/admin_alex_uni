@@ -1,17 +1,14 @@
 import 'package:admin_alex_uni/cubit/app_cubit.dart';
 import 'package:admin_alex_uni/cubit/app_states.dart';
-import 'package:admin_alex_uni/models/department_model.dart';
-import 'package:admin_alex_uni/pages/add_university_screen.dart';
-import 'package:admin_alex_uni/pages/layout_page.dart';
 import 'package:admin_alex_uni/reusable_widgets.dart';
 import 'package:conditional_builder_null_safety/conditional_builder_null_safety.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firabase_storage;
 import 'package:intl_phone_field/intl_phone_field.dart';
-
 import '../cache_helper.dart';
 import '../constants.dart';
+import 'layout_page.dart';
 
 class AddAdminScreen extends StatefulWidget {
   AddAdminScreen({super.key});
@@ -46,7 +43,7 @@ class _AddAdminScreenState extends State<AddAdminScreen> {
           showFlushBar(context: context,message: state.error,);
         } else if (state is AdminRegesterSuccessState) {
           CacheHelper.saveData(key: 'uId', value: uId).then((value){
-            navigateAndFinish(context: context, screen:  const LayoutPage());
+            navigateAndFinish(context: context, screen:  const LayoutScreen());
           });
         }
       },
@@ -226,9 +223,6 @@ class _AddAdminScreenState extends State<AddAdminScreen> {
 
                       },
                     ),
-
-
-
                     const   Row(
                       children: [
                         Padding(

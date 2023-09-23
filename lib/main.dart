@@ -1,12 +1,9 @@
-import 'package:admin_alex_uni/pages/Admin_login_page.dart';
-import 'package:admin_alex_uni/pages/layout_page.dart';
-
+import 'package:admin_alex_uni/screens/Admin_login_screen.dart';
+import 'package:admin_alex_uni/screens/layout_page.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
-
 import 'cache_helper.dart';
 import 'constants.dart';
 import 'cubit/app_cubit.dart';
@@ -27,7 +24,7 @@ void main() async {
     if (uId == null) {
       startPage = const AdminloginScreen();
     } else {
-      startPage = const LayoutPage();
+      startPage = const LayoutScreen();
     }
 
   runApp(MyApp(

@@ -20,7 +20,20 @@ class _AddUniversityScreenState extends State<AddUniversityScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<AppCubit, AppStates>(
-      listener: (context, state) {},
+      listener: (context, state) {
+        if (state is CreateUniversitySuccessState) {
+          setState(() {
+            AppCubit.get(context).image = null;
+            nameController.clear();
+          });
+        }
+        if(state is AppChangeNavBarState){
+          setState(() {
+            AppCubit.get(context).image = null;
+            error=false;
+          });
+        }
+      },
       builder: (context, state) {
         AppCubit cubit = AppCubit.get(context);
 

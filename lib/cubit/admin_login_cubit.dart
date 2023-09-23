@@ -1,5 +1,7 @@
 import 'package:bloc/bloc.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:meta/meta.dart';
 
@@ -23,8 +25,18 @@ class AdminLoginCubit extends Cubit<AdminLoginState> {
         email: email,
         password: password,
       );
-      uId=userCredential.user!.uid;
-      emit(LoginSuccessState(userCredential.user!.uid));
+      FirebaseFirestore.instance
+          .collection('Admins')
+          .doc(userCredential.user!.uid)
+          .get()
+          .then((value) {
+            if(value.exists){
+              uId=userCredential.user!.uid;
+              emit(LoginSuccessState(userCredential.user!.uid));
+            }else{
+              emit(LoginErrorState(error:'ليس لديك صلاحيات الدخول'));
+            }
+      });
     } on FirebaseAuthException catch (e) {
       String errorMessage = 'حدث خطأ ما';
       if (e.code == 'user-not-found') {

@@ -24,7 +24,31 @@ class _AddDepartmentScreenState extends State<AddDepartmentScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<AppCubit, AppStates>(
-      listener: (context, state) {},
+      listener: (context, state) {
+        if (state is CreateDepartmentSuccessState) {
+          AppCubit.get(context).image = null;
+          nameController.clear();
+          departmentController.clear();
+          setState(() {
+            AppCubit.get(context).image;
+            nameController;
+            departmentController;
+          });
+        }
+        if (state is AppChangeNavBarState) {
+          AppCubit.get(context).image = null;
+          nameController.clear();
+          departmentController.clear();
+          setState(() {
+            AppCubit.get(context).image;
+            nameController;
+            departmentController;
+            underGraduateCheckbox = false;
+            postGraduateCheckbox = false;
+            error = false;
+          });
+        }
+      },
       builder: (context, state) {
         AppCubit cubit = AppCubit.get(context);
 
@@ -239,8 +263,9 @@ class _AddDepartmentScreenState extends State<AddDepartmentScreen> {
                               if (cubit.image != null &&
                                   nameController.text.isNotEmpty &&
                                   cubit.currentSelectedUniversity != null &&
-                                  (underGraduateCheckbox || postGraduateCheckbox) && departmentController.text.isNotEmpty
-                              ) {
+                                  (underGraduateCheckbox ||
+                                      postGraduateCheckbox) &&
+                                  departmentController.text.isNotEmpty) {
                                 setState(() {
                                   isUploading = true;
                                 });
@@ -251,22 +276,8 @@ class _AddDepartmentScreenState extends State<AddDepartmentScreen> {
                                     underGraduate: underGraduateCheckbox,
                                     postGraduate: postGraduateCheckbox,
                                     description: departmentController.text,
-                                  )
-                                      .then((value) {
-                                    cubit.image = null;
-                                    nameController.clear();
-                                    departmentController.clear();
-                                    isUploading = false;
-                                    setState(() {
-                                      cubit.image;
-                                      nameController;
-                                      departmentController;
-                                      isUploading;
-                                    });
-                                  });
+                                  );
                                 });
-
-
                               } else {
                                 setState(() {
                                   error = true;

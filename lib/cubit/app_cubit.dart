@@ -1,23 +1,25 @@
 import 'dart:io';
 import 'package:admin_alex_uni/cubit/app_states.dart';
 import 'package:admin_alex_uni/models/university_model.dart';
-import 'package:admin_alex_uni/pages/add_department_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart'as firebase_storage;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:image_picker/image_picker.dart';
+import '../cache_helper.dart';
 import '../constants.dart';
 import '../models/admin_model.dart';
 import '../models/department_model.dart';
-import '../pages/add_university_screen.dart';
+import '../reusable_widgets.dart';
+import '../screens/Admin_login_screen.dart';
+import '../screens/add_department_screen.dart';
+import '../screens/add_university_screen.dart';
 
 
 class AppCubit extends Cubit<AppStates>{
   AppCubit() : super(AppInitialState()){
     getUniversities();
-
   }
 
   static AppCubit get(context) => BlocProvider.of(context);
@@ -29,7 +31,6 @@ class AppCubit extends Cubit<AppStates>{
   List<Widget> screens = [
     AddUniversityScreen(),
     AddDepartmentScreen(),
-
   ];
 
   changeNavBar(int index)async{
@@ -180,7 +181,6 @@ class AppCubit extends Cubit<AppStates>{
         name: name,
         email: email,
         phone: phone,
-        password: password,
         underGraduate: underGraduate,
         postGraduate: postGraduate,
       );
@@ -204,7 +204,6 @@ class AppCubit extends Cubit<AppStates>{
   createAdmin({
     required String id,
     required String name,
-    required String password,
     required String phone,
     required String email,
     required bool underGraduate,
@@ -215,7 +214,6 @@ class AppCubit extends Cubit<AppStates>{
     AdminModel adminModel = AdminModel(
       id: id,
       name: name,
-      password: password,
       phone: phone,
       email: email,
       universityId: currentSelectedUniversity!.uId,
@@ -244,6 +242,52 @@ class AppCubit extends Cubit<AppStates>{
     // Add the admin to the department's subcollection
     departmentRef.collection('Admins').doc(id).set(adminModel.toMap()).then((value) {
       emit(CreateAdminSuccessState());
+    });
+  }
+
+  AdminModel? adminModel ;
+  getAdminData(){
+    emit(GetAdminDataLoadingState());
+    FirebaseFirestore.instance
+        .collection('Admins')
+        .doc(uId)
+        .get()
+        .then((value) {
+      adminModel = AdminModel.fromJson(value.data()!);
+      emit(GetAdminDataSuccessState());
+    }).catchError((onError) {
+      emit(GetAdminDataErrorState(onError.toString()));
+    });
+  }
+
+  updateUserData({required String phone,}){
+    emit(UpdateUserDataLoadingState());
+    adminModel!.phone=phone;
+    FirebaseFirestore.instance
+        .collection('Admins')
+        .doc(uId)
+        .update(adminModel!.toMap())
+        .then((value) {
+      emit(UpdateUserDataSuccessState());
+    }).catchError((onError) {
+      emit(UpdateUserDataErrorState(onError.toString()));
+    });
+  }
+
+  logout(context) {
+    emit(AppLogoutLoadingState());
+    FirebaseAuth.instance.signOut().then((value) {
+      CacheHelper.removeData(key: 'uId').then((value) {
+        currentIndex = 0;
+        uId = null;
+        navigateAndFinish(
+          context: context,
+          screen: const AdminloginScreen(),
+        );
+      });
+      emit(AppLogoutSuccessState());
+    }).catchError((onError) {
+      emit(AppLogoutErrorState(onError.toString()));
     });
   }
 

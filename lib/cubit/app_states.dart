@@ -53,3 +53,33 @@ class AdminRegesterErrorState extends AppStates {
 
   AdminRegesterErrorState({required this.error});
 }
+
+class AppLogoutLoadingState extends AppStates {}
+
+class AppLogoutSuccessState extends AppStates {}
+
+class AppLogoutErrorState extends AppStates {
+  final String error;
+
+  AppLogoutErrorState(this.error);
+}
+
+class GetAdminDataLoadingState extends AppStates {}
+
+class GetAdminDataSuccessState extends AppStates {}
+
+class GetAdminDataErrorState extends AppStates {
+  final String error;
+
+  GetAdminDataErrorState(this.error);
+}
+
+class UpdateUserDataLoadingState extends AppStates {}
+
+class UpdateUserDataSuccessState extends AppStates {}
+
+class UpdateUserDataErrorState extends AppStates {
+  final String error;
+
+  UpdateUserDataErrorState(this.error);
+}
