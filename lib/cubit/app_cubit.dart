@@ -1,22 +1,17 @@
 import 'dart:io';
-
 import 'package:admin_alex_uni/cubit/app_states.dart';
 import 'package:admin_alex_uni/models/university_model.dart';
-import 'package:admin_alex_uni/pages/add_admin_screen.dart';
 import 'package:admin_alex_uni/pages/add_department_screen.dart';
-import 'package:admin_alex_uni/pages/add_university_screen.dart';
-import 'package:bloc/bloc.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart'as firebase_storage;
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:image_picker/image_picker.dart';
-
 import '../constants.dart';
 import '../models/admin_model.dart';
 import '../models/department_model.dart';
+import '../pages/add_university_screen.dart';
 
 
 class AppCubit extends Cubit<AppStates>{
@@ -175,14 +170,13 @@ class AppCubit extends Cubit<AppStates>{
     required bool postGraduate,
 }){
     emit(AdminRegesterLoadingState());
-    FirebaseAuth.instance
-        .createUserWithEmailAndPassword(
+    FirebaseAuth.instance.createUserWithEmailAndPassword(
       email: email,
       password: password,
-    )
-        .then((value) {
+    ).then((value) {
       uId= value.user!.uid;
       createAdmin(
+        id: value.user!.uid,
         name: name,
         email: email,
         phone: phone,
@@ -208,6 +202,7 @@ class AppCubit extends Cubit<AppStates>{
 
 
   createAdmin({
+    required String id,
     required String name,
     required String password,
     required String phone,
@@ -218,6 +213,7 @@ class AppCubit extends Cubit<AppStates>{
     emit(CreateAdminLoadingState());
 
     AdminModel adminModel = AdminModel(
+      id: id,
       name: name,
       password: password,
       phone: phone,
@@ -233,7 +229,8 @@ class AppCubit extends Cubit<AppStates>{
 
     FirebaseFirestore.instance
         .collection('Admins')
-        .add(adminModel.toMap())
+        .doc(id)
+        .set(adminModel.toMap())
         .then((value) {
       emit(CreateAdminSuccessState());
     });
@@ -245,10 +242,9 @@ class AppCubit extends Cubit<AppStates>{
         .doc(currentSelectedDepartment!.id);
 
     // Add the admin to the department's subcollection
-    departmentRef.collection('Admins').add(adminModel.toMap()).then((value) {
+    departmentRef.collection('Admins').doc(id).set(adminModel.toMap()).then((value) {
       emit(CreateAdminSuccessState());
     });
   }
-
 
 }
