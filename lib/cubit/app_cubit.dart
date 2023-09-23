@@ -2,7 +2,7 @@ import 'dart:io';
 import 'package:admin_alex_uni/cubit/app_states.dart';
 import 'package:admin_alex_uni/models/university_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_storage/firebase_storage.dart'as firebase_storage;
+import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -16,24 +16,26 @@ import '../screens/Admin_login_screen.dart';
 import '../screens/add_department_screen.dart';
 import '../screens/add_university_screen.dart';
 
-
-class AppCubit extends Cubit<AppStates>{
-  AppCubit() : super(AppInitialState()){
+class AppCubit extends Cubit<AppStates> {
+  AppCubit() : super(AppInitialState()) {
     getUniversities();
+    getAdminData();
+    print(adminModel);
+    print(uId);
   }
 
   static AppCubit get(context) => BlocProvider.of(context);
 
   int currentIndex = 0;
-  UniversityModel? currentSelectedUniversity=null;
-  DepartmentModel? currentSelectedDepartment=null;
+  UniversityModel? currentSelectedUniversity = null;
+  DepartmentModel? currentSelectedDepartment = null;
 
   List<Widget> screens = [
     AddUniversityScreen(),
     AddDepartmentScreen(),
   ];
 
-  changeNavBar(int index)async{
+  changeNavBar(int index) async {
     currentIndex = index;
     emit(AppChangeNavBarState());
   }
@@ -74,8 +76,10 @@ class AppCubit extends Cubit<AppStates>{
   Future uploadImage() async {
     emit(PickImageLoadingState());
     firebase_storage.FirebaseStorage storage =
-    firebase_storage.FirebaseStorage.instance;
-    firebase_storage.Reference ref = storage.ref().child('Universities/${Uri.file(image!.path).pathSegments.last}');
+        firebase_storage.FirebaseStorage.instance;
+    firebase_storage.Reference ref = storage
+        .ref()
+        .child('Universities/${Uri.file(image!.path).pathSegments.last}');
     firebase_storage.UploadTask uploadTask = ref.putFile(image!);
     await uploadTask.whenComplete(() async {
       uploadedImageLink = await ref.getDownloadURL();
@@ -90,19 +94,23 @@ class AppCubit extends Cubit<AppStates>{
   void getUniversities() {
     universities = [];
     emit(GetUniversitiesLoadingState());
-    FirebaseFirestore.instance.collection('Universities').orderBy('name').get().then((value) {
+    FirebaseFirestore.instance
+        .collection('Universities')
+        .orderBy('name')
+        .get()
+        .then((value) {
       value.docs.forEach((element) {
-        UniversityModel currentUniversity = UniversityModel.fromJson(element.data());
+        UniversityModel currentUniversity =
+            UniversityModel.fromJson(element.data());
         currentUniversity.uId = element.id;
         universities.add(currentUniversity);
       });
-      currentSelectedUniversity = universities[0]??null;
+      currentSelectedUniversity = universities[0] ?? null;
       emit(GetUniversitiesSuccessState());
     }).catchError((onError) {
       emit(GetUniversitiesErrorState(onError.toString()));
     });
   }
-  
 
   createDepartment({
     required String name,
@@ -120,7 +128,6 @@ class AppCubit extends Cubit<AppStates>{
       postGraduate: postGraduate,
       departmentImage: departmentImage,
       description: description,
-
     );
 
     FirebaseFirestore.instance
@@ -134,8 +141,8 @@ class AppCubit extends Cubit<AppStates>{
   }
 
   List<DepartmentModel> departments = [];
-  void displaydepartments(){
-    currentSelectedDepartment=null;
+  void displaydepartments() {
+    currentSelectedDepartment = null;
     departments = [];
 
     emit(GetDepartmentsLoadingState());
@@ -148,13 +155,10 @@ class AppCubit extends Cubit<AppStates>{
         .then((value) {
       value.docs.forEach((element) {
         DepartmentModel currentDepartment =
-        DepartmentModel.fromJson(element.data());
+            DepartmentModel.fromJson(element.data());
         currentDepartment.id = element.id;
         departments.add(currentDepartment);
-
-
       });
-
 
       emit(GetDepartmentsSuccessState());
     }).catchError((onError) {
@@ -169,13 +173,15 @@ class AppCubit extends Cubit<AppStates>{
     required String email,
     required bool underGraduate,
     required bool postGraduate,
-}){
+  }) {
     emit(AdminRegesterLoadingState());
-    FirebaseAuth.instance.createUserWithEmailAndPassword(
+    FirebaseAuth.instance
+        .createUserWithEmailAndPassword(
       email: email,
       password: password,
-    ).then((value) {
-      uId= value.user!.uid;
+    )
+        .then((value) {
+      uId = value.user!.uid;
       createAdmin(
         id: value.user!.uid,
         name: name,
@@ -188,9 +194,12 @@ class AppCubit extends Cubit<AppStates>{
     }).catchError((error) {
       if (error is FirebaseAuthException) {
         if (error.code == 'weak-password') {
-          emit(AdminRegesterErrorState( error: 'كلمه السر ضعيفه',));
+          emit(AdminRegesterErrorState(
+            error: 'كلمه السر ضعيفه',
+          ));
         } else if (error.code == 'email-already-in-use') {
-          emit(AdminRegesterErrorState(error: 'هذا البريد الالكتروني مسجل بالفعل'));
+          emit(AdminRegesterErrorState(
+              error: 'هذا البريد الالكتروني مسجل بالفعل'));
         } else {
           emit(AdminRegesterErrorState(error: 'حدث خطأ ما,حاول مره اخري'));
         }
@@ -199,7 +208,6 @@ class AppCubit extends Cubit<AppStates>{
       }
     });
   }
-
 
   createAdmin({
     required String id,
@@ -223,8 +231,6 @@ class AppCubit extends Cubit<AppStates>{
     );
     emit(CreateAdminLoadingState());
 
-
-
     FirebaseFirestore.instance
         .collection('Admins')
         .doc(id)
@@ -240,13 +246,17 @@ class AppCubit extends Cubit<AppStates>{
         .doc(currentSelectedDepartment!.id);
 
     // Add the admin to the department's subcollection
-    departmentRef.collection('Admins').doc(id).set(adminModel.toMap()).then((value) {
+    departmentRef
+        .collection('Admins')
+        .doc(id)
+        .set(adminModel.toMap())
+        .then((value) {
       emit(CreateAdminSuccessState());
     });
   }
 
-  AdminModel? adminModel ;
-  getAdminData(){
+  AdminModel? adminModel;
+  getAdminData() {
     emit(GetAdminDataLoadingState());
     FirebaseFirestore.instance
         .collection('Admins')
@@ -260,14 +270,24 @@ class AppCubit extends Cubit<AppStates>{
     });
   }
 
-  updateUserData({required String phone,}){
+  updateUserData({
+    required String phone,
+  }) {
     emit(UpdateUserDataLoadingState());
-    adminModel!.phone=phone;
+    adminModel!.phone = phone;
     FirebaseFirestore.instance
         .collection('Admins')
         .doc(uId)
         .update(adminModel!.toMap())
-        .then((value) {
+        .then((value) async {
+      await FirebaseFirestore.instance
+          .collection('Universities')
+          .doc(adminModel!.universityId)
+          .collection('Departments')
+          .doc(adminModel!.departmentId)
+          .collection('Admins')
+          .doc(adminModel!.id)
+          .update(adminModel!.toMap());
       emit(UpdateUserDataSuccessState());
     }).catchError((onError) {
       emit(UpdateUserDataErrorState(onError.toString()));
@@ -290,5 +310,4 @@ class AppCubit extends Cubit<AppStates>{
       emit(AppLogoutErrorState(onError.toString()));
     });
   }
-
 }

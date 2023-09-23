@@ -5,8 +5,21 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../cubit/app_cubit.dart';
 
-class LayoutScreen extends StatelessWidget {
+class LayoutScreen extends StatefulWidget {
   const LayoutScreen({super.key});
+
+  @override
+  State<LayoutScreen> createState() => _LayoutScreenState();
+}
+
+class _LayoutScreenState extends State<LayoutScreen> {
+
+  @override
+  void initState() {
+    super.initState();
+    // TODO: implement initState
+    AppCubit.get(context).getAdminData();
+  }
 
   @override
   Widget build(BuildContext context) {

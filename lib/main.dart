@@ -55,10 +55,8 @@ class _MyAppState extends State<MyApp> {
     return MultiBlocProvider(
       providers: [
         BlocProvider(
-          create: (BuildContext context) => AppCubit()
-
+          create: (BuildContext context) => AppCubit()..getAdminData(),
         ),
-
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,

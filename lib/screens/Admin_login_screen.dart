@@ -59,7 +59,6 @@ class _AdminloginScreenState extends State<AdminloginScreen> {
           return Scaffold(
             body: Stack(
               children: [
-
                 Center(
                   child: SafeArea(
                     child: SingleChildScrollView(
