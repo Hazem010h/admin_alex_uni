@@ -15,6 +15,7 @@ import '../reusable_widgets.dart';
 import '../screens/Admin_login_screen.dart';
 import '../screens/add_department_screen.dart';
 import '../screens/add_university_screen.dart';
+import '../screens/news_screen.dart';
 
 class AppCubit extends Cubit<AppStates> {
   AppCubit() : super(AppInitialState()) {
@@ -33,6 +34,8 @@ class AppCubit extends Cubit<AppStates> {
   List<Widget> screens = [
     AddUniversityScreen(),
     AddDepartmentScreen(),
+    AddNewsScreen(),
+
   ];
 
   changeNavBar(int index) async {
@@ -310,4 +313,101 @@ class AppCubit extends Cubit<AppStates> {
       emit(AppLogoutErrorState(onError.toString()));
     });
   }
+
+  // File? newsImage;
+  // final ImagePicker imagePicker = ImagePicker();
+  //
+  // void pickNewsImage() async {
+  //   final pickedFile = await imagePicker.pickImage(source: ImageSource.gallery);
+  //   if (pickedFile != null) {
+  //     newsImage = File(pickedFile.path);
+  //     emit(PickImageSuccessState());
+  //   } else {
+  //     print('No image selected.');
+  //     emit(PickImageErrorState());
+  //   }
+  // }
+  //
+  // String uploadedNewsImageLink = '';
+  // Future uploadNewsImage() async {
+  //   emit(PickImageLoadingState());
+  //   firebase_storage.FirebaseStorage storage =
+  //       firebase_storage.FirebaseStorage.instance;
+  //   firebase_storage.Reference ref = storage.ref().child('News/${Uri.file(newsImage!.path).pathSegments.last}');
+  //   firebase_storage.UploadTask uploadTask = ref.putFile(newsImage!);
+  //   await uploadTask.whenComplete(() async {
+  //     uploadedNewsImageLink = await ref.getDownloadURL();
+  //     emit(PickImageSuccessState());
+  //   }).catchError((onError) {
+  //     emit(PickImageErrorState());
+  //     print(onError.toString());
+  //   });
+  // }
+
+  final List<File> selectedImages = [];
+  final List<String> descriptions = [];
+  final ImagePicker imagePicker = ImagePicker();
+
+  // Function to pick an image from the device's gallery
+  Future<dynamic> pickNewsImage() async {
+    final pickedFile = await imagePicker.pickImage(source: ImageSource.gallery);
+    if (pickedFile != null) {
+
+        selectedImages.add(File(pickedFile.path));
+        descriptions.add('');
+        emit(PickImageSuccessState());
+    }
+  }
+
+  // Function to upload all the news items
+  Future<void> uploadNews() async {
+    final firestore = FirebaseFirestore.instance;
+    final storage = firebase_storage.FirebaseStorage.instance;
+
+    try {
+      // Create a new Firestore document for the news item
+      final newsDocRef = await firestore.collection('News').add({
+        'images': [],
+        'descriptions': [],
+      });
+
+      List<String> imageUrls = []; // Collect image URLs
+      List<String> imageDescriptions = []; // Collect descriptions
+
+      for (int i = 0; i < selectedImages.length; i++) {
+        final imageFile = selectedImages[i];
+        final description = descriptions[i];
+
+        // Upload image to Firebase Storage
+        final storageRef = storage
+            .ref()
+            .child('News/${newsDocRef.id}/${DateTime.now().millisecondsSinceEpoch}');
+        final uploadTask = storageRef.putFile(imageFile);
+
+        // Wait for the image upload to complete
+        final snapshot = await uploadTask;
+        if (snapshot.state == firebase_storage.TaskState.success) {
+          final imageUrl = await storageRef.getDownloadURL();
+
+          imageUrls.add(imageUrl); // Add image URL to the list
+          imageDescriptions.add(description); // Add description to the list
+        } else {
+          print('Error uploading image: ');
+        }
+      }
+
+      // Update the Firestore document with image URLs and descriptions
+      await newsDocRef.update({
+        'images': FieldValue.arrayUnion(imageUrls),
+        'descriptions': FieldValue.arrayUnion(imageDescriptions),
+      });
+
+      emit(UploadNewsSuccessState());
+
+    } catch (error) {
+      print('Error uploading news: $error');
+    }
+  }
+
+
 }

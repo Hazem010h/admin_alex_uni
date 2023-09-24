@@ -61,6 +61,11 @@ class _LayoutScreenState extends State<LayoutScreen> {
                   icon: Icon(Icons.add),
                   label: 'Department',
                 ),
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.add),
+                  label: 'News',
+                ),
+
 
               ],
             )

@@ -83,3 +83,6 @@ class UpdateUserDataErrorState extends AppStates {
 
   UpdateUserDataErrorState(this.error);
 }
+
+class UploadNewsSuccessState extends AppStates {}
+  class UploadNewsErrorState extends AppStates {}
