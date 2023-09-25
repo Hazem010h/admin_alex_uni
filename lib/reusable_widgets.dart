@@ -43,6 +43,7 @@ Widget reusableTextFormField({
   required void Function() onTap,
   String? Function(String?)? validator,
   String? Function(String?)? onSubmit,
+  String? Function(String?)? onChanged,
   required TextEditingController controller,
   required TextInputType keyboardType,
   Icon? prefix,
@@ -54,6 +55,7 @@ Widget reusableTextFormField({
     Padding(
       padding: const EdgeInsets.fromLTRB(0, 5, 0, 5),
       child: TextFormField(
+        onChanged: onChanged,
         style: style,
         controller: controller,
         obscureText: obscure,

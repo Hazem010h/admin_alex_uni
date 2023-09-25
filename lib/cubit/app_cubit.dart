@@ -15,7 +15,7 @@ import '../reusable_widgets.dart';
 import '../screens/Admin_login_screen.dart';
 import '../screens/add_department_screen.dart';
 import '../screens/add_university_screen.dart';
-import '../screens/news_screen.dart';
+import '../screens/add_news_screen.dart';
 
 class AppCubit extends Cubit<AppStates> {
   AppCubit() : super(AppInitialState()) {
