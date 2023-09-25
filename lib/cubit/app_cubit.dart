@@ -314,36 +314,6 @@ class AppCubit extends Cubit<AppStates> {
     });
   }
 
-  // File? newsImage;
-  // final ImagePicker imagePicker = ImagePicker();
-  //
-  // void pickNewsImage() async {
-  //   final pickedFile = await imagePicker.pickImage(source: ImageSource.gallery);
-  //   if (pickedFile != null) {
-  //     newsImage = File(pickedFile.path);
-  //     emit(PickImageSuccessState());
-  //   } else {
-  //     print('No image selected.');
-  //     emit(PickImageErrorState());
-  //   }
-  // }
-  //
-  // String uploadedNewsImageLink = '';
-  // Future uploadNewsImage() async {
-  //   emit(PickImageLoadingState());
-  //   firebase_storage.FirebaseStorage storage =
-  //       firebase_storage.FirebaseStorage.instance;
-  //   firebase_storage.Reference ref = storage.ref().child('News/${Uri.file(newsImage!.path).pathSegments.last}');
-  //   firebase_storage.UploadTask uploadTask = ref.putFile(newsImage!);
-  //   await uploadTask.whenComplete(() async {
-  //     uploadedNewsImageLink = await ref.getDownloadURL();
-  //     emit(PickImageSuccessState());
-  //   }).catchError((onError) {
-  //     emit(PickImageErrorState());
-  //     print(onError.toString());
-  //   });
-  // }
-
   final List<File> selectedImages = [];
   final List<String> descriptions = [];
   final ImagePicker imagePicker = ImagePicker();

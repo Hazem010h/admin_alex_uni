@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:admin_alex_uni/reusable_widgets.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -14,16 +13,20 @@ class AddNewsScreen extends StatefulWidget {
 }
 
 class _AddNewsScreenState extends State<AddNewsScreen> {
+
   int sectionNumber = 1;
+
   final picker = ImagePicker();
+
+  File? headlineImage;
+
   TextEditingController articleTitleController = TextEditingController();
+  TextEditingController headlineController = TextEditingController();
 
   List<File?> images = [];
-  // List<String?>imagesUrls = [];
-
   List<String?> titles = [];
   List<String?> descriptions = [];
-  List<String?> ImagesDescriptions = [];
+  List<String?> imagesDescriptions = [];
 
   @override
   Widget build(BuildContext context) {
@@ -39,22 +42,66 @@ class _AddNewsScreenState extends State<AddNewsScreen> {
               controller: articleTitleController,
               keyboardType: TextInputType.text,
             ),
-            SizedBox(
+            const SizedBox(
+              height: 10,
+            ),
+            reusableTextFormField(
+              label: 'Headline',
+              onTap: () {},
+              controller: headlineController,
+              keyboardType: TextInputType.text,
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+            Center(
+              child: CircleAvatar(
+                radius: MediaQuery.of(context).size.width * 0.15,
+                backgroundColor: headlineImage == null
+                    ? Colors.grey[350]
+                    : Theme.of(context).scaffoldBackgroundColor,
+                child: headlineImage == null
+                    ? IconButton(
+                  onPressed: () {},
+                  icon: Icon(
+                    Icons.add_a_photo,
+                    color: Colors.black,
+                    size: MediaQuery.of(context).size.width * 0.1,
+                  ),
+                )
+                    : Image.file(headlineImage!),
+              ),
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+            Center(
+              child: TextButton(
+                onPressed: ()async {
+                  headlineImage = await pickImage();
+                  setState((){
+                    headlineImage;
+                  });
+                },
+                child: const Text('Pick Image'),
+              ),
+            ),
+            const SizedBox(
               height: 10,
             ),
             ListView.separated(
               shrinkWrap: true,
-              physics: NeverScrollableScrollPhysics(),
+              physics: const NeverScrollableScrollPhysics(),
               itemBuilder: (context, index) => buildSectionItem(
                 context: context,
                 index: index,
               ),
-              separatorBuilder: (context, index) => SizedBox(
+              separatorBuilder: (context, index) => const SizedBox(
                 height: 10,
               ),
               itemCount: sectionNumber,
             ),
-            SizedBox(
+            const SizedBox(
               height: 10,
             ),
             reusableElevatedButton(
@@ -66,7 +113,7 @@ class _AddNewsScreenState extends State<AddNewsScreen> {
                 });
               },
             ),
-            SizedBox(
+            const SizedBox(
               height: 10,
             ),
             if (sectionNumber > 1)
@@ -79,11 +126,11 @@ class _AddNewsScreenState extends State<AddNewsScreen> {
                     images.removeLast();
                     titles.removeLast();
                     descriptions.removeLast();
-                    ImagesDescriptions.removeLast();
+                    imagesDescriptions.removeLast();
                   });
                 },
               ),
-            SizedBox(
+            const SizedBox(
               height: 10,
             ),
             reusableElevatedButton(
@@ -112,12 +159,12 @@ class _AddNewsScreenState extends State<AddNewsScreen> {
       images.add(null);
       descriptions.add(null);
       titles.add(null);
-      ImagesDescriptions.add(null);
+      imagesDescriptions.add(null);
     }
 
     sectionDescriptionController.text = descriptions[index] ?? '';
     sectionTitleController.text = titles[index] ?? '';
-    sectionImageDescriptionController.text = ImagesDescriptions[index] ?? '';
+    sectionImageDescriptionController.text = imagesDescriptions[index] ?? '';
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -126,7 +173,7 @@ class _AddNewsScreenState extends State<AddNewsScreen> {
           padding: const EdgeInsets.all(8.0),
           child: Text(
             'Section: ${index + 1}',
-            style: TextStyle(
+            style: const TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.bold,
             ),
@@ -150,7 +197,7 @@ class _AddNewsScreenState extends State<AddNewsScreen> {
                 : Image.file(images[index]!),
           ),
         ),
-        SizedBox(
+        const SizedBox(
           height: 10,
         ),
         Center(
@@ -161,23 +208,23 @@ class _AddNewsScreenState extends State<AddNewsScreen> {
                 images;
               });
             },
-            child: Text('Pick Image'),
+            child: const Text('Pick Image'),
           ),
         ),
-        SizedBox(
+        const SizedBox(
           height: 10,
         ),
         reusableTextFormField(
           label: 'Image Description',
           onTap: () {},
           onChanged: (value) {
-            ImagesDescriptions[index] = value;
+            imagesDescriptions[index] = value;
             return null;
           },
           controller: sectionImageDescriptionController,
           keyboardType: TextInputType.text,
         ),
-        SizedBox(
+        const SizedBox(
           height: 10,
         ),
         reusableTextFormField(
@@ -190,7 +237,7 @@ class _AddNewsScreenState extends State<AddNewsScreen> {
           controller: sectionTitleController,
           keyboardType: TextInputType.text,
         ),
-        SizedBox(
+        const SizedBox(
           height: 10,
         ),
         reusableTextFormField(
@@ -219,52 +266,6 @@ class _AddNewsScreenState extends State<AddNewsScreen> {
     }
   }
 
-  // upload images list to firebase storage and return list of urls
-  // uploadImages(){
-  //   for(int i = 0; i < images.length; i++){
-  //     if(images[i] != null){
-  //       uploadImage(images[i]!).then((value) {
-  //         imagesUrls.add(value);
-  //       });
-  //     }else{
-  //       imagesUrls.add(null);
-  //     }
-  //   }
-  //   return imagesUrls;
-  // }
-  //
-  // // upload image to firebase storage and return url
-  // Future<String> uploadImage(File image) async {
-  //   String imageUrl = '';
-  //   await FirebaseStorage.instance
-  //       .ref()
-  //       .child('News/${Uri.file(image.path).pathSegments.last}')
-  //       .putFile(image)
-  //       .then((value) async {
-  //     await value.ref.getDownloadURL().then((value) {
-  //       imageUrl = value;
-  //     });
-  //   });
-  //   print (imageUrl);
-  //   return imageUrl;
-  // }
-  //
-  // // upload news to firebase firestore
-  // uploadNews() async {
-  //   print(imagesUrls);
-  //   FirebaseFirestore.instance.collection('News').add({
-  //     'title': articleTitleController.text,
-  //     'newsSections': [
-  //       for(int i = 0; i < sectionNumber; i++)
-  //         {
-  //           'image': imagesUrls[i],
-  //           'title': titles[i],
-  //           'description': descriptions[i],
-  //           'imageDescription': ImagesDescriptions[i],
-  //         }
-  //     ],
-  //   });
-  // }
   Future<void> uploadNews() async {
     final firestore = FirebaseFirestore.instance;
     final storage = firebase_storage.FirebaseStorage.instance;
@@ -272,6 +273,8 @@ class _AddNewsScreenState extends State<AddNewsScreen> {
     try {
       final newsDocRef = await firestore.collection('News').add({
         'title': articleTitleController.text,
+        'headline': headlineController.text,
+        'headlineImage': null,
         'sectionTitles':[],
         'images': [],
         'imageDescription': [],
@@ -279,7 +282,24 @@ class _AddNewsScreenState extends State<AddNewsScreen> {
       });
 
       List<String?> imageUrls = []; // Collect image URLs
-      // List<String> imageDescriptions = []; // Collect descriptions
+
+      if(headlineImage != null){
+        final storageRef = storage
+            .ref()
+            .child('News/${newsDocRef.id}/${DateTime.now().millisecondsSinceEpoch}');
+        final uploadTask = storageRef.putFile(headlineImage!);
+        final snapshot = await uploadTask;
+        if (snapshot.state == firebase_storage.TaskState.success) {
+          final imageUrl = await storageRef.getDownloadURL();
+
+          await newsDocRef.update({
+            'headlineImage': imageUrl,
+          });
+
+        } else {
+          print('Error uploading image: ');
+        }
+      }
 
       for (int i = 0; i < images.length; i++) {
         final imageFile = images[i];
@@ -287,11 +307,10 @@ class _AddNewsScreenState extends State<AddNewsScreen> {
           imageUrls.add(null);
           continue;
         }
-        // final description = descriptions[i];
         final storageRef = storage
             .ref()
             .child('News/${newsDocRef.id}/${DateTime.now().millisecondsSinceEpoch}');
-        final uploadTask = storageRef.putFile(imageFile!);
+        final uploadTask = storageRef.putFile(imageFile);
         final snapshot = await uploadTask;
         if (snapshot.state == firebase_storage.TaskState.success) {
           final imageUrl = await storageRef.getDownloadURL();
@@ -306,7 +325,7 @@ class _AddNewsScreenState extends State<AddNewsScreen> {
         'images': FieldValue.arrayUnion(imageUrls),
         'descriptions': FieldValue.arrayUnion(descriptions),
         'sectionTitles': FieldValue.arrayUnion(titles),
-        'imageDescription': FieldValue.arrayUnion(ImagesDescriptions),
+        'imageDescription': FieldValue.arrayUnion(imagesDescriptions),
       });
 
     } catch (error) {
