@@ -13,7 +13,6 @@ class LayoutScreen extends StatefulWidget {
 }
 
 class _LayoutScreenState extends State<LayoutScreen> {
-
   @override
   void initState() {
     super.initState();
@@ -28,48 +27,57 @@ class _LayoutScreenState extends State<LayoutScreen> {
       child: BlocConsumer<AppCubit, AppStates>(
         listener: (context, state) {},
         builder: (context, state) {
-
           AppCubit cubit = AppCubit.get(context);
 
           return Scaffold(
-            appBar: AppBar(
-              title: const Text('Layout Page'),
-              actions: [
-                IconButton(onPressed: (){
-                  navigateTo(context: context, screen: SettingScreen(),);
-                }, icon: Icon(Icons.settings),),
-                IconButton(
-                  onPressed: () {
-                    cubit.logout(context);
-                  },
-                  icon: const Icon(Icons.logout),
-                ),
-              ],
-            ),
-            body: cubit.screens[cubit.currentIndex],
-            bottomNavigationBar: BottomNavigationBar(
-              currentIndex: cubit.currentIndex,
-              onTap: (index) {
-                cubit.changeNavBar(index);
-              },
-              items: const [
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.add),
-                  label: 'University',
-                ),
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.add),
-                  label: 'Department',
-                ),
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.add),
-                  label: 'News',
-                ),
-
-
-              ],
-            )
-          );
+              appBar: AppBar(
+                title: const Text('Layout Page'),
+                actions: [
+                  IconButton(
+                    onPressed: () async {
+                      navigateTo(
+                        context: context,
+                        screen: SettingScreen(),
+                      );
+                    },
+                    icon: const Icon(
+                      Icons.settings,
+                    ),
+                  ),
+                  IconButton(
+                    onPressed: () {
+                      cubit.logout(context);
+                    },
+                    icon: const Icon(Icons.logout),
+                  ),
+                ],
+              ),
+              body: cubit.screens[cubit.currentIndex],
+              bottomNavigationBar: BottomNavigationBar(
+                type: BottomNavigationBarType.fixed,
+                currentIndex: cubit.currentIndex,
+                onTap: (index) {
+                  cubit.changeNavBar(index);
+                },
+                items: const [
+                  BottomNavigationBarItem(
+                    icon: Icon(Icons.add),
+                    label: 'University',
+                  ),
+                  BottomNavigationBarItem(
+                    icon: Icon(Icons.add),
+                    label: 'Department',
+                  ),
+                  BottomNavigationBarItem(
+                    icon: Icon(Icons.add),
+                    label: 'News',
+                  ),
+                  BottomNavigationBarItem(
+                    icon: Icon(Icons.newspaper),
+                    label: 'Review Posts',
+                  ),
+                ],
+              ));
         },
       ),
     );

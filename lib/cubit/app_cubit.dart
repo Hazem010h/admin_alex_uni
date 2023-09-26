@@ -1,6 +1,8 @@
 import 'dart:io';
 import 'package:admin_alex_uni/cubit/app_states.dart';
+import 'package:admin_alex_uni/models/settings_model.dart';
 import 'package:admin_alex_uni/models/university_model.dart';
+import 'package:admin_alex_uni/screens/review_posts.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:flutter/material.dart';
@@ -11,6 +13,7 @@ import '../cache_helper.dart';
 import '../constants.dart';
 import '../models/admin_model.dart';
 import '../models/department_model.dart';
+import '../models/post_model.dart';
 import '../reusable_widgets.dart';
 import '../screens/Admin_login_screen.dart';
 import '../screens/add_department_screen.dart';
@@ -35,7 +38,7 @@ class AppCubit extends Cubit<AppStates> {
     AddUniversityScreen(),
     AddDepartmentScreen(),
     AddNewsScreen(),
-
+    ReviewPostsScreen(),
   ];
 
   changeNavBar(int index) async {
@@ -275,9 +278,11 @@ class AppCubit extends Cubit<AppStates> {
 
   updateUserData({
     required String phone,
+    required bool available,
   }) {
     emit(UpdateUserDataLoadingState());
     adminModel!.phone = phone;
+    adminModel!.isAvailable = available;
     FirebaseFirestore.instance
         .collection('Admins')
         .doc(uId)
@@ -314,70 +319,135 @@ class AppCubit extends Cubit<AppStates> {
     });
   }
 
-  final List<File> selectedImages = [];
-  final List<String> descriptions = [];
-  final ImagePicker imagePicker = ImagePicker();
+  SettingsModel? settings;
 
-  // Function to pick an image from the device's gallery
-  Future<dynamic> pickNewsImage() async {
-    final pickedFile = await imagePicker.pickImage(source: ImageSource.gallery);
-    if (pickedFile != null) {
-
-        selectedImages.add(File(pickedFile.path));
-        descriptions.add('');
-        emit(PickImageSuccessState());
-    }
+  getSettings(){
+    emit(GetSettingsLoadingState());
+    FirebaseFirestore.instance
+        .collection('Settings')
+        .doc('settings')
+        .get()
+        .then((value) {
+      settings = SettingsModel.fromJson(value.data()!);
+      print(settings!.reviewPosts);
+      emit(GetSettingsSuccessState());
+    }).catchError((onError) {
+      emit(GetSettingsErrorState(onError.toString()));
+    });
   }
 
-  // Function to upload all the news items
-  Future<void> uploadNews() async {
-    final firestore = FirebaseFirestore.instance;
-    final storage = firebase_storage.FirebaseStorage.instance;
+  updateSettings({
+    required bool reviewPosts,
+  }) {
+    emit(UpdateUserDataLoadingState());
+    settings!.reviewPosts = reviewPosts;
+    FirebaseFirestore.instance
+        .collection('Settings')
+        .doc('settings')
+        .update(settings!.toMap())
+        .then((value) async {
+      emit(UpdateUserDataSuccessState());
+    }).catchError((onError) {
+      emit(UpdateUserDataErrorState(onError.toString()));
+    });
+  }
 
-    try {
-      // Create a new Firestore document for the news item
-      final newsDocRef = await firestore.collection('News').add({
-        'images': [],
-        'descriptions': [],
-      });
-
-      List<String> imageUrls = []; // Collect image URLs
-      List<String> imageDescriptions = []; // Collect descriptions
-
-      for (int i = 0; i < selectedImages.length; i++) {
-        final imageFile = selectedImages[i];
-        final description = descriptions[i];
-
-        // Upload image to Firebase Storage
-        final storageRef = storage
-            .ref()
-            .child('News/${newsDocRef.id}/${DateTime.now().millisecondsSinceEpoch}');
-        final uploadTask = storageRef.putFile(imageFile);
-
-        // Wait for the image upload to complete
-        final snapshot = await uploadTask;
-        if (snapshot.state == firebase_storage.TaskState.success) {
-          final imageUrl = await storageRef.getDownloadURL();
-
-          imageUrls.add(imageUrl); // Add image URL to the list
-          imageDescriptions.add(description); // Add description to the list
-        } else {
-          print('Error uploading image: ');
-        }
+  List<Map<String, PostModel>> posts = [];
+  List<PostModel> post = [];
+  List postsId = [];
+  getPosts() {
+    posts = [];
+    postsId = [];
+    emit(GetPostsLoadingState());
+    FirebaseFirestore.instance
+        .collection('posts')
+        .orderBy('date', descending: true)
+        .get()
+        .then((value) {
+      for (var element in value.docs) {
+        post.add(PostModel.fromJson(element.data()));
+        posts.add({
+          element.reference.id: PostModel.fromJson(element.data()),
+        });
+        postsId.add(element.id);
       }
-
-      // Update the Firestore document with image URLs and descriptions
-      await newsDocRef.update({
-        'images': FieldValue.arrayUnion(imageUrls),
-        'descriptions': FieldValue.arrayUnion(imageDescriptions),
-      });
-
-      emit(UploadNewsSuccessState());
-
-    } catch (error) {
-      print('Error uploading news: $error');
-    }
+    }).then((value) {
+      emit(GetPostsSuccessState());
+    }).catchError((error) {
+      emit(GetPostsErrorState(error.toString()));
+    });
   }
 
+  reviewPosts(){
+    posts = [];
+    postsId = [];
+    emit(GetPostsLoadingState());
+    FirebaseFirestore.instance
+        .collection('posts')
+        .where('showPost', isEqualTo: false)
+        .where('isReviewed', isEqualTo: false)
+        .orderBy('date', descending: true)
+        .get()
+        .then((value) {
+      for (var element in value.docs) {
+        post.add(PostModel.fromJson(element.data()));
+        posts.add({
+          element.reference.id: PostModel.fromJson(element.data()),
+        });
+        postsId.add(element.id);
+      }
+    }).then((value) {
+      emit(GetPostsSuccessState());
+    }).catchError((error) {
+      emit(GetPostsErrorState(error.toString()));
+    });
+  }
+
+  addReviewPost({
+    required String id,
+    required bool showPost,
+  }) {
+    FirebaseFirestore.instance
+        .collection('posts')
+        .doc(id)
+        .update({
+      'showPost': showPost,
+      'isReviewed': true,
+    }).then((value) {
+      reviewPosts();
+      emit(DeletePostSuccessState());
+    });
+  }
+
+  deletePost(String id) {
+    FirebaseFirestore.instance
+        .collection('posts')
+        .doc(id)
+        .delete()
+        .then((value) {
+      getPosts();
+      emit(DeletePostSuccessState());
+    });
+  }
+
+  List<CommentDataModel> comments = [];
+  getComments({
+    required String postId,
+  }){
+    emit(GetCommentsLoadingState());
+    FirebaseFirestore.instance
+        .collection('posts')
+        .doc(postId)
+        .get()
+        .then((value) {
+      comments = [];
+      for (var element in value.data()!['comments']) {
+        comments.add(CommentDataModel.fromJson(element));
+      }
+      emit(GetCommentsSuccessState());
+    }).catchError((error) {
+      emit(GetCommentsErrorState(error.toString()));
+    });
+  }
 
 }

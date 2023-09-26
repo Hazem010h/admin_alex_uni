@@ -65,9 +65,7 @@ class AppLogoutErrorState extends AppStates {
 }
 
 class GetAdminDataLoadingState extends AppStates {}
-
 class GetAdminDataSuccessState extends AppStates {}
-
 class GetAdminDataErrorState extends AppStates {
   final String error;
 
@@ -75,9 +73,7 @@ class GetAdminDataErrorState extends AppStates {
 }
 
 class UpdateUserDataLoadingState extends AppStates {}
-
 class UpdateUserDataSuccessState extends AppStates {}
-
 class UpdateUserDataErrorState extends AppStates {
   final String error;
 
@@ -85,4 +81,32 @@ class UpdateUserDataErrorState extends AppStates {
 }
 
 class UploadNewsSuccessState extends AppStates {}
-  class UploadNewsErrorState extends AppStates {}
+class UploadNewsErrorState extends AppStates {}
+
+class GetSettingsLoadingState extends AppStates {}
+class GetSettingsSuccessState extends AppStates {}
+class GetSettingsErrorState extends AppStates {
+  final String error;
+
+  GetSettingsErrorState(this.error);
+}
+
+class GetPostsLoadingState extends AppStates {}
+class GetPostsSuccessState extends AppStates {}
+class GetPostsErrorState extends AppStates {
+  final String error;
+
+  GetPostsErrorState(this.error);
+}
+
+class DeletePostSuccessState extends AppStates {}
+
+class GetCommentsLoadingState extends AppStates {}
+
+class GetCommentsSuccessState extends AppStates {}
+
+class GetCommentsErrorState extends AppStates {
+  final String error;
+
+  GetCommentsErrorState(this.error);
+}
