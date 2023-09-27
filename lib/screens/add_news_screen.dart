@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 
+import '../cubit/app_cubit.dart';
+
 class AddNewsScreen extends StatefulWidget {
   const AddNewsScreen({super.key});
 
@@ -13,7 +15,6 @@ class AddNewsScreen extends StatefulWidget {
 }
 
 class _AddNewsScreenState extends State<AddNewsScreen> {
-
   int sectionNumber = 1;
 
   final picker = ImagePicker();
@@ -21,13 +22,11 @@ class _AddNewsScreenState extends State<AddNewsScreen> {
   File? headlineImage;
 
   TextEditingController articleTitleController = TextEditingController();
-  TextEditingController headlineController = TextEditingController();
+  TextEditingController mainDescription = TextEditingController();
 
   List<File?> images = [];
-  List<String?> titles = [];
   List<String?> descriptions = [];
-  List<String?> imagesDescriptions = [];
- bool showErrors=false;
+  bool showErrors = false;
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
@@ -36,24 +35,6 @@ class _AddNewsScreenState extends State<AddNewsScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            reusableTextFormField(
-              label: 'Article title',
-              onTap: () {},
-              controller: articleTitleController,
-              keyboardType: TextInputType.text,
-            ),
-            const SizedBox(
-              height: 10,
-            ),
-            reusableTextFormField(
-              label: 'Headline',
-              onTap: () {},
-              controller: headlineController,
-              keyboardType: TextInputType.text,
-            ),
-            const SizedBox(
-              height: 10,
-            ),
             Center(
               child: CircleAvatar(
                 radius: MediaQuery.of(context).size.width * 0.15,
@@ -72,19 +53,31 @@ class _AddNewsScreenState extends State<AddNewsScreen> {
                     : Image.file(headlineImage!),
               ),
             ),
-            const SizedBox(
-              height: 10,
-            ),
             Center(
               child: TextButton(
-                onPressed: ()async {
+                onPressed: () async {
                   headlineImage = await pickImage();
-                  setState((){
+                  setState(() {
                     headlineImage;
                   });
                 },
                 child: const Text('Pick Image'),
               ),
+            ),
+            reusableTextFormField(
+              label: 'Article title',
+              onTap: () {},
+              controller: articleTitleController,
+              keyboardType: TextInputType.text,
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+            reusableTextFormField(
+              label: 'Main Description',
+              onTap: () {},
+              controller: mainDescription,
+              keyboardType: TextInputType.text,
             ),
             const SizedBox(
               height: 10,
@@ -124,31 +117,52 @@ class _AddNewsScreenState extends State<AddNewsScreen> {
                   setState(() {
                     sectionNumber--;
                     images.removeLast();
-                    titles.removeLast();
                     descriptions.removeLast();
-                    imagesDescriptions.removeLast();
                   });
                 },
               ),
             const SizedBox(
               height: 10,
             ),
-            if(showErrors)
-              const Text('Please fill all fields',style: TextStyle(color: Colors.red),),
-            if(showErrors)
-            const SizedBox(
-              height: 10,
-            ),
+            if (showErrors)
+              const Text(
+                'Please fill all fields',
+                style: TextStyle(color: Colors.red),
+              ),
+            if (showErrors)
+              const SizedBox(
+                height: 10,
+              ),
             reusableElevatedButton(
               label: 'Save',
               function: () async {
-                if(articleTitleController.text.isEmpty||headlineController.text.isEmpty||headlineImage==null){
+                if (articleTitleController.text.isEmpty ||
+                    mainDescription.text.isEmpty ||
+                    headlineImage == null) {
                   setState(() {
-                    showErrors=true;
+                    showErrors = true;
                   });
                   return;
                 }
-                showErrors=false;
+                for(int i = 0; i < images.length; i++){
+                  if(images[i] == null){
+                    setState(() {
+                      showErrors = true;
+                    });
+                    return;
+                  }
+                }
+                for(int i = 0; i < descriptions.length; i++){
+                  if(descriptions[i] == null){
+                    setState(() {
+                      showErrors = true;
+                    });
+                    return;
+                  }
+                }
+                setState(() {
+                  showErrors = false;
+                });
                 await uploadNews();
               },
             ),
@@ -171,13 +185,10 @@ class _AddNewsScreenState extends State<AddNewsScreen> {
     if (sectionNumber > images.length) {
       images.add(null);
       descriptions.add(null);
-      titles.add(null);
-      imagesDescriptions.add(null);
     }
 
-    sectionDescriptionController.text = descriptions[index] ?? '';
-    sectionTitleController.text = titles[index] ?? '';
-    sectionImageDescriptionController.text = imagesDescriptions[index] ?? '';
+    if(descriptions[index]!=null)
+    sectionDescriptionController.text = descriptions[index]!;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -210,45 +221,16 @@ class _AddNewsScreenState extends State<AddNewsScreen> {
                 : Image.file(images[index]!),
           ),
         ),
-        const SizedBox(
-          height: 10,
-        ),
         Center(
           child: TextButton(
-            onPressed: ()async {
+            onPressed: () async {
               images[index] = await pickImage();
-              setState((){
+              setState(() {
                 images;
               });
             },
             child: const Text('Pick Image'),
           ),
-        ),
-        const SizedBox(
-          height: 10,
-        ),
-        reusableTextFormField(
-          label: 'Image Description',
-          onTap: () {},
-          onChanged: (value) {
-            imagesDescriptions[index] = value;
-            return null;
-          },
-          controller: sectionImageDescriptionController,
-          keyboardType: TextInputType.text,
-        ),
-        const SizedBox(
-          height: 10,
-        ),
-        reusableTextFormField(
-          label: 'Section Title',
-          onTap: () {},
-          onChanged: (value) {
-            titles[index] = value;
-            return null;
-          },
-          controller: sectionTitleController,
-          keyboardType: TextInputType.text,
         ),
         const SizedBox(
           height: 10,
@@ -280,72 +262,67 @@ class _AddNewsScreenState extends State<AddNewsScreen> {
   }
 
   Future<void> uploadNews() async {
-
     final firestore = FirebaseFirestore.instance;
     final storage = firebase_storage.FirebaseStorage.instance;
+    final cubit = AppCubit.get(context);
 
     try {
-      final newsDocRef = await firestore.collection('News').add({
+      final newRef = firestore
+          .collection('News')
+          .doc();
+
+      // Set the initial department data
+      await newRef.set({
         'title': articleTitleController.text,
-        'headline': headlineController.text,
+        'mainDescription': mainDescription.text,
         'headlineImage': null,
-        'sectionTitles':[],
         'images': [],
-        'imageDescription': [],
         'descriptions': [],
       });
 
-      List<String?> imageUrls = []; // Collect image URLs
+      // Create a batch to perform multiple writes atomically
+      WriteBatch batch = firestore.batch();
 
-      if(headlineImage != null){
-        final storageRef = storage
-            .ref()
-            .child('News/${newsDocRef.id}/${DateTime.now().millisecondsSinceEpoch}');
+      if (headlineImage != null) {
+        final storageRef = storage.ref().child(
+            'News/${newRef.id}/${DateTime.now().millisecondsSinceEpoch}');
         final uploadTask = storageRef.putFile(headlineImage!);
         final snapshot = await uploadTask;
         if (snapshot.state == firebase_storage.TaskState.success) {
           final imageUrl = await storageRef.getDownloadURL();
 
-          await newsDocRef.update({
+          // Update the department data with the image URL
+          batch.update(newRef, {
             'headlineImage': imageUrl,
           });
-
         } else {
           print('Error uploading image: ');
         }
       }
-
+      String? imageUrl;
       for (int i = 0; i < images.length; i++) {
         final imageFile = images[i];
-        if(imageFile == null){
-          imageUrls.add(null);
-          continue;
+        if (imageFile != null) {
+          final storageRef = storage.ref().child(
+              'News/${newRef.id}/${DateTime.now().millisecondsSinceEpoch}');
+          final uploadTask = storageRef.putFile(imageFile);
+          final snapshot = await uploadTask;
+          if (snapshot.state == firebase_storage.TaskState.success) {
+            imageUrl = await storageRef.getDownloadURL();
+          }
+        }else{
+          imageUrl = null;
         }
-        final storageRef = storage
-            .ref()
-            .child('News/${newsDocRef.id}/${DateTime.now().millisecondsSinceEpoch}');
-        final uploadTask = storageRef.putFile(imageFile);
-        final snapshot = await uploadTask;
-        if (snapshot.state == firebase_storage.TaskState.success) {
-          final imageUrl = await storageRef.getDownloadURL();
 
-          imageUrls.add(imageUrl);
-        } else {
-          print('Error uploading image: ');
-        }
+        batch.update(newRef, {
+          'images': FieldValue.arrayUnion([imageUrl]),
+          'descriptions': FieldValue.arrayUnion([descriptions[i]==''?null:descriptions[i]]),
+        });
       }
 
-      await newsDocRef.update({
-        'images': FieldValue.arrayUnion(imageUrls),
-        'descriptions': FieldValue.arrayUnion(descriptions),
-        'sectionTitles': FieldValue.arrayUnion(titles),
-        'imageDescription': FieldValue.arrayUnion(imagesDescriptions),
-        'date': DateTime.now(), // Convert DateTime to hours
-      });
-
+      await batch.commit();
     } catch (error) {
-      print('Error uploading news: $error');
+      print('Error uploading department: $error');
     }
   }
-
 }
