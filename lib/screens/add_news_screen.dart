@@ -27,7 +27,7 @@ class _AddNewsScreenState extends State<AddNewsScreen> {
   List<String?> titles = [];
   List<String?> descriptions = [];
   List<String?> imagesDescriptions = [];
-
+ bool showErrors=false;
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
@@ -133,9 +133,22 @@ class _AddNewsScreenState extends State<AddNewsScreen> {
             const SizedBox(
               height: 10,
             ),
+            if(showErrors)
+              const Text('Please fill all fields',style: TextStyle(color: Colors.red),),
+            if(showErrors)
+            const SizedBox(
+              height: 10,
+            ),
             reusableElevatedButton(
               label: 'Save',
               function: () async {
+                if(articleTitleController.text.isEmpty||headlineController.text.isEmpty||headlineImage==null){
+                  setState(() {
+                    showErrors=true;
+                  });
+                  return;
+                }
+                showErrors=false;
                 await uploadNews();
               },
             ),
@@ -267,6 +280,7 @@ class _AddNewsScreenState extends State<AddNewsScreen> {
   }
 
   Future<void> uploadNews() async {
+
     final firestore = FirebaseFirestore.instance;
     final storage = firebase_storage.FirebaseStorage.instance;
 
@@ -315,7 +329,7 @@ class _AddNewsScreenState extends State<AddNewsScreen> {
         if (snapshot.state == firebase_storage.TaskState.success) {
           final imageUrl = await storageRef.getDownloadURL();
 
-          imageUrls.add(imageUrl); // Add image URL to the list// Add description to the list
+          imageUrls.add(imageUrl);
         } else {
           print('Error uploading image: ');
         }
@@ -326,6 +340,7 @@ class _AddNewsScreenState extends State<AddNewsScreen> {
         'descriptions': FieldValue.arrayUnion(descriptions),
         'sectionTitles': FieldValue.arrayUnion(titles),
         'imageDescription': FieldValue.arrayUnion(imagesDescriptions),
+        'date': DateTime.now(), // Convert DateTime to hours
       });
 
     } catch (error) {
