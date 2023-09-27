@@ -1,12 +1,10 @@
 class NewsModel {
   String? title;
   List<NewsSection>? newsSections;
-  DateTime? date; // Add this field
 
   NewsModel({
     this.title,
     this.newsSections,
-    this.date, // Initialize it in the constructor if needed
   });
 
   NewsModel.fromJson(Map<String, dynamic> json) {
@@ -17,9 +15,7 @@ class NewsModel {
         newsSections!.add(NewsSection.fromJson(v));
       });
     }
-    if (json['date'] != null) {
-      date = DateTime.parse(json['date']); // Modify the date parsing logic as needed
-    }
+
   }
 
 
@@ -27,7 +23,6 @@ class NewsModel {
     return {
       'title': title,
       'newsSections': newsSections!.map((e) => e.toJson()).toList(),
-      'date': date != null ? date!.toUtc().millisecondsSinceEpoch ~/ 3600000 : null, // Convert DateTime to hours
     };
   }
 

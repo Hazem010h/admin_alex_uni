@@ -278,6 +278,7 @@ class _AddNewsScreenState extends State<AddNewsScreen> {
         'headlineImage': null,
         'images': [],
         'descriptions': [],
+
       });
 
       // Create a batch to perform multiple writes atomically
@@ -321,6 +322,14 @@ class _AddNewsScreenState extends State<AddNewsScreen> {
       }
 
       await batch.commit();
+      setState(() {
+        sectionNumber = 1;
+        headlineImage = null;
+        articleTitleController.clear();
+        mainDescription.clear();
+        images = [];
+        descriptions = [];
+      });
     } catch (error) {
       print('Error uploading department: $error');
     }
