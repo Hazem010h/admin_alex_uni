@@ -67,7 +67,7 @@ class AppCubit extends Cubit<AppStates> {
 
   File? image;
   final picker = ImagePicker();
-  void pickImage() async {
+   pickImage() async {
     final pickedFile = await picker.pickImage(source: ImageSource.gallery);
     if (pickedFile != null) {
       image = File(pickedFile.path);
