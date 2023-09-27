@@ -21,23 +21,21 @@ class _AddDepartmentScreenState extends State<AddDepartmentScreen> {
   TextEditingController departmentController = TextEditingController();
   bool isUploading = false;
   bool error = false;
-  int sectionNumber = 1;
+  int sectionNumber = 0;
   final picker = ImagePicker();
   List<File?> images = [];
+  File? mainImage;
   List<String?> titles = [];
+  String? mainTitle;
+  String? mainDescription;
   List<String?> descriptions = [];
+  TextEditingController departmentNameController = TextEditingController();
+  TextEditingController departmentdescriptionsController = TextEditingController();
 
   // Variables for radio buttons
-  List<bool?> isUnderGraduateList = [];
-  List<bool?> isPostGraduateList = [];
+bool? isUnderGraduateList =false;
+  bool? isPostGraduateList =false;
 
-  @override
-  void initState() {
-    super.initState();
-    // Initialize the lists with default values
-    isUnderGraduateList.add(false);
-
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -61,8 +59,8 @@ class _AddDepartmentScreenState extends State<AddDepartmentScreen> {
             AppCubit.get(context).image;
             nameController;
             departmentController;
-            isUnderGraduateList = [];
-            isUnderGraduateList = [];
+            isUnderGraduateList = false;
+            isUnderGraduateList = false;
             error = false;
           });
         }
@@ -124,6 +122,98 @@ class _AddDepartmentScreenState extends State<AddDepartmentScreen> {
                   },
                 ),
               ),
+              Center(
+                child: CircleAvatar(
+                  radius: MediaQuery.of(context).size.width * 0.15,
+                  backgroundColor: mainImage == null
+                      ? Colors.grey[350]
+                      : Theme.of(context).scaffoldBackgroundColor,
+                  child:mainImage == null
+                      ? IconButton(
+                    onPressed: () {},
+                    icon: Icon(
+                      Icons.add_a_photo,
+                      color: Colors.black,
+                      size: MediaQuery.of(context).size.width * 0.1,
+                    ),
+                  )
+                      : Image.file(mainImage!),
+                ),
+              ),
+              const SizedBox(
+                height: 10,
+              ),
+              Center(
+                child: TextButton(
+                  onPressed: () async {
+                    mainImage = await pickImage();
+                    setState(() {
+                      mainImage;
+                    });
+                  },
+                  child: const Text('Pick Image'),
+                ),
+              ),
+              const SizedBox(
+                height: 10,
+              ),
+              const SizedBox(
+                height: 10,
+              ),
+              reusableTextFormField(
+                label: 'Department Name',
+                onChanged: (value) {
+                  mainTitle = value;
+                  return null;
+                },
+                controller: departmentNameController,
+                keyboardType: TextInputType.text,
+                onTap: () {},
+              ),
+              reusableTextFormField(
+                label: 'Department Description',
+                onChanged: (value) {
+                  mainDescription = value;
+                  return null;
+                },
+                controller: departmentdescriptionsController,
+                keyboardType: TextInputType.text,
+                onTap: () {},
+              ),
+              const SizedBox(
+                height: 10,
+              ),
+
+              Row(
+                children: [
+                  Checkbox(
+                    value: isUnderGraduateList ?? false,
+                    onChanged: (value) {
+                      setState(() {
+                        isUnderGraduateList = value;
+
+                      });
+                    },
+                  ),
+                  Text('Undergraduate'),
+                  Checkbox(
+                    value: isPostGraduateList?? false,
+                    onChanged: (value) {
+                      setState(() {
+                        isPostGraduateList = value;
+                      });
+                    },
+                  ),
+                  Text('Postgraduate'),
+                ],
+              ),
+              const SizedBox(
+                height: 10,
+              ),
+              Divider(
+                thickness: 1.0,
+              ),
+
               ListView.separated(
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
@@ -146,17 +236,16 @@ class _AddDepartmentScreenState extends State<AddDepartmentScreen> {
                     sectionNumber++;
                     // Add new items to the lists when adding a new section
                     images.add(null);
-                    titles.add(null);
-                    descriptions.add(null);
-                    isUnderGraduateList.add(false);
-                    isPostGraduateList.add(false);
+                    titles.add('');
+                    descriptions.add('');
+
                   });
                 },
               ),
               const SizedBox(
                 height: 10,
               ),
-              if (sectionNumber > 1)
+              if (sectionNumber > 0)
                 reusableElevatedButton(
                   label: 'delete section',
                   backColor: Colors.red,
@@ -167,8 +256,7 @@ class _AddDepartmentScreenState extends State<AddDepartmentScreen> {
                       images.removeLast();
                       titles.removeLast();
                       descriptions.removeLast();
-                      isUnderGraduateList.removeLast();
-                      isPostGraduateList.removeLast();
+
                     });
                   },
                 ),
@@ -205,8 +293,7 @@ class _AddDepartmentScreenState extends State<AddDepartmentScreen> {
       images.add(null);
       descriptions.add(null);
       titles.add(null);
-      isUnderGraduateList.add(false);
-      isPostGraduateList.add(false);
+
     }
 
     departmentDescriptionController.text = descriptions[index] ?? '';
@@ -231,15 +318,15 @@ class _AddDepartmentScreenState extends State<AddDepartmentScreen> {
             backgroundColor: images[index] == null
                 ? Colors.grey[350]
                 : Theme.of(context).scaffoldBackgroundColor,
-            child: images[index] == null
+            child:images[index] == null
                 ? IconButton(
-                    onPressed: () {},
-                    icon: Icon(
-                      Icons.add_a_photo,
-                      color: Colors.black,
-                      size: MediaQuery.of(context).size.width * 0.1,
-                    ),
-                  )
+              onPressed: () {},
+              icon: Icon(
+                Icons.add_a_photo,
+                color: Colors.black,
+                size: MediaQuery.of(context).size.width * 0.1,
+              ),
+            )
                 : Image.file(images[index]!),
           ),
         ),
@@ -251,20 +338,14 @@ class _AddDepartmentScreenState extends State<AddDepartmentScreen> {
             onPressed: () async {
               images[index] = await pickImage();
               setState(() {
-                images;
+                images[index];
               });
             },
             child: const Text('Pick Image'),
           ),
         ),
-        const SizedBox(
-          height: 10,
-        ),
-        const SizedBox(
-          height: 10,
-        ),
         reusableTextFormField(
-          label: 'Department Name',
+          label: 'Section Title',
           onChanged: (value) {
             titles[index] = value;
             return null;
@@ -273,11 +354,9 @@ class _AddDepartmentScreenState extends State<AddDepartmentScreen> {
           keyboardType: TextInputType.text,
           onTap: () {},
         ),
-        const SizedBox(
-          height: 10,
-        ),
+
         reusableTextFormField(
-          label: 'Department Description',
+          label: 'Section Description',
           onChanged: (value) {
             descriptions[index] = value;
             return null;
@@ -289,34 +368,7 @@ class _AddDepartmentScreenState extends State<AddDepartmentScreen> {
         const SizedBox(
           height: 10,
         ),
-        Row(
-          children: [
-            Checkbox(
-              value: isUnderGraduateList[index] ?? false,
-              onChanged: (value) {
-                setState(() {
-                  isUnderGraduateList[index] = value;
-                  if (value == true) {
-                    isPostGraduateList[index] = false;
-                  }
-                });
-              },
-            ),
-            Text('Undergraduate'),
-            Checkbox(
-              value: isPostGraduateList[index] ?? false,
-              onChanged: (value) {
-                setState(() {
-                  isPostGraduateList[index] = value;
-                  if (value == true) {
-                    isUnderGraduateList[index] = false;
-                  }
-                });
-              },
-            ),
-            Text('Postgraduate'),
-          ],
-        ),
+
       ],
     );
   }
@@ -355,14 +407,43 @@ class _AddDepartmentScreenState extends State<AddDepartmentScreen> {
 
       // Set the initial department data
       await departmentRef.set({
-        'name': titles,
-        'description': descriptions,
+
+        'name': mainTitle,
+        'description': mainDescription,
+        'isUndergraduate': isUnderGraduateList,
+        'isPostgraduate': isPostGraduateList,
+        'sectionImages': [],
+        'sectionTitles': [],
+        'sectionDescriptions': [],
+        'universityId': universityId,
       });
 
       // Create a batch to perform multiple writes atomically
       WriteBatch batch = firestore.batch();
 
-      // Upload and attach images to the department document (similar to your existing code)
+      if(mainImage!=null){
+
+        final storageRef = storage.ref().child(
+            'Departments/${departmentRef.id}/${DateTime.now().millisecondsSinceEpoch}');
+        final uploadTask = storageRef.putFile(mainImage!);
+        final snapshot = await uploadTask;
+        if (snapshot.state == firebase_storage.TaskState.success) {
+          final imageUrl = await storageRef.getDownloadURL();
+
+          // Update the department data with the image URL
+          batch.update(departmentRef, {
+            'mainImage': imageUrl,
+          });
+        } else {
+          print('Error uploading image: ');
+        }
+
+
+
+      }
+
+
+
       for (int i = 0; i < images.length; i++) {
         final imageFile = images[i];
         if (imageFile == null) {
@@ -378,11 +459,10 @@ class _AddDepartmentScreenState extends State<AddDepartmentScreen> {
 
           // Update the department data with the image URL
           batch.update(departmentRef, {
-            'images': FieldValue.arrayUnion([imageUrl]),
-            'name': FieldValue.arrayUnion([titles[i]]),
-            'description': FieldValue.arrayUnion([descriptions[i]]),
-            'isUndergraduate': FieldValue.arrayUnion([!isPostGraduateList[i]!]),
-            'isPostgraduate': FieldValue.arrayUnion([isPostGraduateList[i]]),
+            'sectionImages': FieldValue.arrayUnion([imageUrl]),
+            'sectionTitles': FieldValue.arrayUnion([titles[i]]),
+            'sectionDescriptions': FieldValue.arrayUnion([descriptions[i]]),
+
 
           });
         } else {
@@ -408,28 +488,3 @@ class _AddDepartmentScreenState extends State<AddDepartmentScreen> {
 
 }
 
-//listner
-// if (state is CreateAdminSuccessState) {
-// if (state is CreateDepartmentSuccessState) {
-//   AppCubit.get(context).image = null;
-//   nameController.clear();
-//   departmentController.clear();
-//   setState(() {
-//     AppCubit.get(context).image;
-//     nameController;
-//     departmentController;
-//   });
-// }
-// if (state is AppChangeNavBarState) {
-//   AppCubit.get(context).image = null;
-//   nameController.clear();
-//   departmentController.clear();
-//   setState(() {
-//     AppCubit.get(context).image;
-//     nameController;
-//     departmentController;
-//     underGraduateCheckbox = false;
-//     postGraduateCheckbox = false;
-//     error = false;
-//   });
-// }
