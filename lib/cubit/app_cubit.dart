@@ -372,6 +372,7 @@ class AppCubit extends Cubit<AppStates> {
         postsId.add(element.id);
       }
     }).then((value) {
+      print(postsId);
       emit(GetPostsSuccessState());
     }).catchError((error) {
       emit(GetPostsErrorState(error.toString()));
