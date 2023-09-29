@@ -54,22 +54,22 @@ class CommentDataModel {
   CommentDataModel({
     required this.text,
     required this.time,
-    required this.ownerName,
-    required this.ownerImage,
+   required this.ownerName,
+
     required this.ownerId,
   });
 
   late final String text;
   late final String time;
-  late final String ownerName;
-  late final String ownerImage;
+ late final String ownerName;
+
   late final String ownerId;
 
   CommentDataModel.fromJson(Map<String, dynamic> json) {
     text = json['text'] ?? '';
     time = json['time'] ?? '';
-    ownerName = json['ownerName'] ?? '';
-    ownerImage = json['ownerImage'] ?? '';
+   ownerName = json['ownerName'] ?? '';
+
     ownerId = json['ownerId'] ?? '';
   }
 
@@ -77,8 +77,8 @@ class CommentDataModel {
     return {
       'text': text,
       'time': time,
-      'ownerName': ownerName,
-      'ownerImage': ownerImage,
+     'ownerName': ownerName,
+
       'ownerId': ownerId,
     };
   }

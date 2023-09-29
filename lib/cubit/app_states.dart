@@ -41,7 +41,12 @@ class GetDepartmentsErrorState extends AppStates {
 
 class CreateAdminLoadingState extends AppStates {}
 class CreateAdminSuccessState extends AppStates {}
-class CreateAdminErrorState extends AppStates {}
+class CreateAdminErrorState extends AppStates {
+  final String error;
+  CreateAdminErrorState(this.error){
+    print(error);
+  }
+}
 
 class AdminRegesterLoadingState extends AppStates {}
 class AdminRegesterSuccessState extends AppStates {
@@ -101,6 +106,10 @@ class GetPostsErrorState extends AppStates {
 
 class DeletePostSuccessState extends AppStates {}
 
+class DeletePostErrorState extends AppStates{
+
+}
+
 class GetCommentsLoadingState extends AppStates {}
 
 class GetCommentsSuccessState extends AppStates {}
@@ -110,3 +119,20 @@ class GetCommentsErrorState extends AppStates {
 
   GetCommentsErrorState(this.error);
 }
+
+class LikePostSuccessState extends AppStates{}
+class LikeAdminPostSuccessState extends AppStates{}
+
+class AddSharePostLoadingState extends AppStates{}
+class AddSharePostSuccessState extends AppStates{}
+class AddSharePostErrorState extends AppStates{}
+
+class WriteCommentLoadingState extends AppStates{}
+class WriteCommentSuccessState extends AppStates{}
+class WriteCommentErrorState extends AppStates{}
+
+
+class DeleteCommentLoadingState extends AppStates{}
+class DeleteCommentSuccessState extends AppStates{}
+class DeleteCommentErrorState extends AppStates{}
+

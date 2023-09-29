@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:admin_alex_uni/cubit/app_states.dart';
 import 'package:admin_alex_uni/models/settings_model.dart';
 import 'package:admin_alex_uni/models/university_model.dart';
+import 'package:admin_alex_uni/models/user_Model.dart';
 import 'package:admin_alex_uni/screens/review_posts.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
@@ -222,7 +223,7 @@ class AppCubit extends Cubit<AppStates> {
     required String email,
     required bool underGraduate,
     required bool postGraduate,
-  }) {
+  }) async {
     emit(CreateAdminLoadingState());
 
     AdminModel adminModel = AdminModel(
@@ -230,35 +231,36 @@ class AppCubit extends Cubit<AppStates> {
       name: name,
       phone: phone,
       email: email,
-      universityId: currentSelectedUniversity!.uId,
-      departmentId: currentSelectedDepartment!.id,
+      universityId: currentSelectedUniversity?.uId,
+      departmentId: currentSelectedDepartment?.id,
       underGraduate: underGraduate,
       postGraduate: postGraduate,
     );
-    emit(CreateAdminLoadingState());
 
-    FirebaseFirestore.instance
-        .collection('Admins')
-        .doc(id)
-        .set(adminModel.toMap())
-        .then((value) {
-      emit(CreateAdminSuccessState());
-    });
-    // Get a reference to the department within the university
-    DocumentReference departmentRef = FirebaseFirestore.instance
-        .collection('Universities')
-        .doc(currentSelectedUniversity!.uId)
-        .collection('Departments')
-        .doc(currentSelectedDepartment!.id);
+    try {
+      await FirebaseFirestore.instance
+          .collection('Admins')
+          .doc(id)
+          .set(adminModel.toMap());
 
-    // Add the admin to the department's subcollection
-    departmentRef
-        .collection('Admins')
-        .doc(id)
-        .set(adminModel.toMap())
-        .then((value) {
+      // Get a reference to the department within the university
+      DocumentReference departmentRef = FirebaseFirestore.instance
+          .collection('Universities')
+          .doc(currentSelectedUniversity!.uId)
+          .collection('Departments')
+          .doc(currentSelectedDepartment!.id);
+
+      // Add the admin to the department's subcollection
+      await departmentRef
+          .collection('Admins')
+          .doc(id)
+          .set(adminModel.toMap());
+
       emit(CreateAdminSuccessState());
-    });
+    } catch (error) {
+      // Handle error
+      emit(CreateAdminErrorState(error.toString()));
+    }
   }
 
   AdminModel? adminModel;
@@ -420,6 +422,38 @@ class AppCubit extends Cubit<AppStates> {
     });
   }
 
+  List<Map<String, PostModel>> rejectedposts = [];
+  List<PostModel> rejectedpost = [];
+  List rejectedpostsIds = [];
+  getRejectedPosts() {
+    rejectedposts = [];
+
+    rejectedpost=[];
+    emit(GetPostsLoadingState());
+    FirebaseFirestore.instance
+        .collection('posts')
+        .where('showPost',isEqualTo: false).where('isReviewed',isEqualTo: true)
+        .orderBy('date', descending: true)
+        .get()
+        .then((value) {
+      for (var element in value.docs) {
+        rejectedpost.add(PostModel.fromJson(element.data()));
+        rejectedposts.add({
+          element.reference.id: PostModel.fromJson(element.data()),
+        });
+        rejectedpostsIds.add(element.id);
+      }
+    }).then((value) {
+      emit(GetPostsSuccessState());
+    }).catchError((error) {
+      emit(GetPostsErrorState(error.toString()));
+    });
+  }
+
+
+
+
+
   deletePost(String id) {
     FirebaseFirestore.instance
         .collection('posts')
@@ -430,7 +464,16 @@ class AppCubit extends Cubit<AppStates> {
       emit(DeletePostSuccessState());
     });
   }
-
+  deleteRejectedPost(String id) {
+    FirebaseFirestore.instance
+        .collection('posts')
+        .doc(id)
+        .delete()
+        .then((value) {
+      getRejectedPosts();
+      emit(DeletePostSuccessState());
+    });
+  }
   List<CommentDataModel> comments = [];
   getComments({
     required String postId,
@@ -448,6 +491,99 @@ class AppCubit extends Cubit<AppStates> {
       emit(GetCommentsSuccessState());
     }).catchError((error) {
       emit(GetCommentsErrorState(error.toString()));
+    });
+  }
+
+
+  UserModel? user;
+
+
+  updateAdminPostLikes(Map<String, PostModel> post) {
+
+
+    if (post.values.single.likes!.any((element) => element == adminModel!.id)) {
+      debugPrint('exist and remove');
+
+      post.values.single.likes!.removeWhere((element) => element == adminModel!.id);
+    } else {
+
+      post.values.single.likes!.add(adminModel!.id!);
+
+    }
+    FirebaseFirestore.instance
+        .collection('posts')
+        .doc(post.keys.single)
+        .update(post.values.single.toMap())
+        .then((value) {
+      emit(LikeAdminPostSuccessState());
+    }).catchError((error) {});
+  }
+  addSharedPosts({
+    required String postId,
+    required int index,
+    required context,
+  }){
+    emit(AddSharePostLoadingState());
+    SharePostModel sharePostModel=SharePostModel(
+      postId: postId,
+      text: posts[index].values.single.text,
+      date: posts[index].values.single.date,
+      userName: posts[index].values.single.userName,
+      userImage: posts[index].values.single.userImage,
+      userId: posts[index].values.single.userId,
+      likes: posts[index].values.single.likes,
+      comments: posts[index].values.single.comments,
+      image: posts[index].values.single.image,
+    );
+    FirebaseFirestore.instance.collection('users').doc(uId).update({
+      'sharePosts': FieldValue.arrayUnion([sharePostModel.toMap()]),
+    }).then((value) {
+      showFlushBar(
+        context: context,
+        message: 'Shared Successfully',
+      );
+      emit(AddSharePostSuccessState());
+    }).catchError((error) {
+      emit(AddSharePostErrorState());
+    });
+  }
+
+  writeComment({
+    required String text,
+    required String postId,
+  }){
+    emit(WriteCommentLoadingState());
+    CommentDataModel commentModel = CommentDataModel(
+      text: text,
+      time: DateTime.now().toString(),
+     ownerName: adminModel!.name!,
+
+      ownerId: adminModel!.id!,
+    );
+    FirebaseFirestore.instance
+        .collection('posts')
+        .doc(postId)
+        .update({
+      'comments': FieldValue.arrayUnion([commentModel.toJson()])
+    }).then((value) {
+      getComments(postId: postId);
+      emit(WriteCommentSuccessState());
+    }).catchError((error) {
+      emit(WriteCommentErrorState());
+    });
+  }
+  deleteComment(index, postId){
+    emit(DeleteCommentLoadingState());
+    FirebaseFirestore.instance
+        .collection('posts')
+        .doc(postId)
+        .update({
+      'comments': FieldValue.arrayRemove([comments[index].toJson()])
+    }).then((value) {
+      getComments(postId: postId);
+      emit(DeleteCommentSuccessState());
+    }).catchError((error) {
+      emit(DeleteCommentErrorState());
     });
   }
 

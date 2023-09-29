@@ -1,5 +1,6 @@
 import 'package:admin_alex_uni/cubit/app_cubit.dart';
 import 'package:admin_alex_uni/cubit/app_states.dart';
+import 'package:admin_alex_uni/models/admin_model.dart';
 import 'package:admin_alex_uni/reusable_widgets.dart';
 import 'package:conditional_builder_null_safety/conditional_builder_null_safety.dart';
 import 'package:flutter/material.dart';
@@ -392,18 +393,7 @@ class _AddAdminScreenState extends State<AddAdminScreen> {
                     const   SizedBox(
                       height: 10.0,
                     ),
-                    // if (error)
-                    //   Text(
-                    //     'please fill all fields',
-                    //     style: TextStyle(
-                    //       color: Colors.red,
-                    //       fontSize: 16.0,
-                    //     ),
-                    //   ),
-                    // if (error)
-                    //   SizedBox(
-                    //     height: 10.0,
-                    //   ),
+
                     ConditionalBuilder(
                       condition: isUploading == false ||
                           state is! CreateDepartmentLoadingState,
@@ -441,40 +431,25 @@ class _AddAdminScreenState extends State<AddAdminScreen> {
                                 if (phoneController.text.isEmpty) {
                                   phoneError = 'Phone is required';
                                 }
-                                if (
-                                nameController.text.isNotEmpty &&
-                                    cubit.currentSelectedUniversity != null &&
-                                    (underGraduateCheckbox || postGraduateCheckbox)
-                                    && passwordController.text.isNotEmpty
-                                    && emailController.text.isNotEmpty
-                                    && phone!.isNotEmpty
-                                ) {
-                                  setState(() {
-                                    isUploading = true;
-                                  });
+
                                   cubit.AdminRegester(
+
                                       name: nameController.text,
                                       password: passwordController.text,
                                       phone: phone!,
                                       email: emailController.text,
                                       underGraduate: underGraduateCheckbox,
                                       postGraduate: postGraduateCheckbox);
-
-
-
-                                  // cubit.createAdmin(
-                                  //   name: nameController.text,
-                                  //   email: emailController.text,
-                                  //   password: passwordController.text,
-                                  //   phone: phoneController.text,
-                                  //   underGraduate: underGraduateCheckbox,
-                                  //   postGraduate: postGraduateCheckbox,
-                                  // );
-                                } else {
                                   setState(() {
-                                    error = true; // Set the error flag to true
+                                    isUploading = true;
+
                                   });
-                                }
+
+                                  print('${nameController.text}');
+
+
+
+
                               },
                             ),
                           ),
