@@ -5,8 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 
-import '../cubit/app_cubit.dart';
-
 class AddNewsScreen extends StatefulWidget {
   const AddNewsScreen({super.key});
 
@@ -15,7 +13,7 @@ class AddNewsScreen extends StatefulWidget {
 }
 
 class _AddNewsScreenState extends State<AddNewsScreen> {
-  int sectionNumber = 1;
+  int sectionNumber = 0;
 
   final picker = ImagePicker();
 
@@ -176,10 +174,7 @@ class _AddNewsScreenState extends State<AddNewsScreen> {
     required BuildContext context,
     required int index,
   }) {
-    TextEditingController sectionTitleController = TextEditingController();
     TextEditingController sectionDescriptionController =
-        TextEditingController();
-    TextEditingController sectionImageDescriptionController =
         TextEditingController();
 
     if (sectionNumber > images.length) {
@@ -264,7 +259,6 @@ class _AddNewsScreenState extends State<AddNewsScreen> {
   Future<void> uploadNews() async {
     final firestore = FirebaseFirestore.instance;
     final storage = firebase_storage.FirebaseStorage.instance;
-    final cubit = AppCubit.get(context);
 
     try {
       final newRef = firestore

@@ -17,20 +17,17 @@ class AddDepartmentScreen extends StatefulWidget {
 }
 
 class _AddDepartmentScreenState extends State<AddDepartmentScreen> {
-  TextEditingController nameController = TextEditingController();
-  TextEditingController departmentController = TextEditingController();
   bool isUploading = false;
   bool error = false;
   int sectionNumber = 0;
   final picker = ImagePicker();
   List<File?> images = [];
   File? mainImage;
-  List<String?> titles = [];
   String? mainTitle;
   String? mainDescription;
   List<String?> descriptions = [];
   TextEditingController departmentNameController = TextEditingController();
-  TextEditingController departmentdescriptionsController =
+  TextEditingController departmentDescriptionController =
       TextEditingController();
 
   bool? isUnderGraduateList = false;
@@ -40,7 +37,6 @@ class _AddDepartmentScreenState extends State<AddDepartmentScreen> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     AppCubit.get(context).getUniversities();
   }
@@ -51,22 +47,20 @@ class _AddDepartmentScreenState extends State<AddDepartmentScreen> {
       listener: (context, state) {
         if (state is CreateDepartmentSuccessState) {
           AppCubit.get(context).image = null;
-          nameController.clear();
-          departmentController.clear();
           setState(() {
             AppCubit.get(context).image;
-            nameController;
-            departmentController;
           });
         }
         if (state is AppChangeNavBarState) {
           AppCubit.get(context).image = null;
-          nameController.clear();
-          departmentController.clear();
+          descriptions=[];
+          images=[];
+          sectionNumber = 0;
           setState(() {
             AppCubit.get(context).image;
-            nameController;
-            departmentController;
+            images;
+            descriptions;
+            sectionNumber;
             isUnderGraduateList = false;
             isUnderGraduateList = false;
             error = false;
@@ -80,7 +74,7 @@ class _AddDepartmentScreenState extends State<AddDepartmentScreen> {
           child: SingleChildScrollView(
             child: Column(
               children: [
-                SizedBox(
+                const SizedBox(
                   height: 10.0,
                 ),
                 Center(
@@ -115,10 +109,10 @@ class _AddDepartmentScreenState extends State<AddDepartmentScreen> {
                 const SizedBox(
                   height: 10,
                 ),
-                Row(
+                const Row(
                   children: [
                     Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                      padding: EdgeInsets.symmetric(horizontal: 8.0),
                       child: Text(
                         'Choose Faculty',
                         style: TextStyle(
@@ -138,8 +132,8 @@ class _AddDepartmentScreenState extends State<AddDepartmentScreen> {
                     ),
                   ),
                   child: DropdownButton(
-                    padding: EdgeInsets.symmetric(horizontal: 20.0),
-                    underline: SizedBox(),
+                    padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                    underline: const SizedBox(),
                     alignment: Alignment.center,
                     isExpanded: true,
                     borderRadius: BorderRadius.circular(25.0),
@@ -183,7 +177,7 @@ class _AddDepartmentScreenState extends State<AddDepartmentScreen> {
                     mainDescription = value;
                     return null;
                   },
-                  controller: departmentdescriptionsController,
+                  controller: departmentDescriptionController,
                   keyboardType: TextInputType.text,
                   onTap: () {},
                 ),
@@ -193,7 +187,7 @@ class _AddDepartmentScreenState extends State<AddDepartmentScreen> {
                 Container(
                   width: double.infinity,
                   padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                  child: Text(
+                  child: const Text(
                     'Choose Department Type\n(required one or both)',
                     textAlign: TextAlign.start,
                     style: TextStyle(
@@ -206,7 +200,7 @@ class _AddDepartmentScreenState extends State<AddDepartmentScreen> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text('Undergraduate'),
+                      const Text('Undergraduate'),
                       Checkbox(
                         value: isUnderGraduateList ?? false,
                         onChanged: (value) {
@@ -215,7 +209,7 @@ class _AddDepartmentScreenState extends State<AddDepartmentScreen> {
                           });
                         },
                       ),
-                      Text('Postgraduate'),
+                      const Text('Postgraduate'),
                       Checkbox(
                         value: isPostGraduateList ?? false,
                         onChanged: (value) {
@@ -227,7 +221,7 @@ class _AddDepartmentScreenState extends State<AddDepartmentScreen> {
                     ],
                   ),
                 ),
-                Divider(
+                const Divider(
                   thickness: 1.0,
                 ),
                 ListView.separated(
@@ -263,7 +257,6 @@ class _AddDepartmentScreenState extends State<AddDepartmentScreen> {
                       setState(() {
                         sectionNumber--;
                         images.removeLast();
-                        titles.removeLast();
                         descriptions.removeLast();
                       });
                     },
@@ -283,6 +276,7 @@ class _AddDepartmentScreenState extends State<AddDepartmentScreen> {
                   const SizedBox(
                     height: 10,
                   ),
+                if (!isUploading)
                 reusableElevatedButton(
                   label: 'Save',
                   function: () async {
@@ -296,12 +290,23 @@ class _AddDepartmentScreenState extends State<AddDepartmentScreen> {
                       });
                       return;
                     }
+                    for(int i=0;i<descriptions.length;i++){
+                      if(descriptions[i]==null||images[i]==null){
+                        setState(() {
+                          showErrorMessage = true;
+                        });
+                        return;
+                      }
+                    }
                     setState(() {
+                      isUploading = true;
                       showErrorMessage = false;
                     });
                     await uploadDepartments();
                   },
                 ),
+                if(isUploading)
+                  const Center(child: CircularProgressIndicator()),
               ],
             ),
           ),
@@ -314,18 +319,15 @@ class _AddDepartmentScreenState extends State<AddDepartmentScreen> {
     required BuildContext context,
     required int index,
   }) {
-    TextEditingController departmentNameController = TextEditingController();
     TextEditingController departmentDescriptionController =
         TextEditingController();
 
     if (sectionNumber > images.length) {
       images.add(null);
       descriptions.add(null);
-      titles.add(null);
     }
 
     departmentDescriptionController.text = descriptions[index] ?? '';
-    departmentNameController.text = titles[index] ?? '';
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -373,16 +375,6 @@ class _AddDepartmentScreenState extends State<AddDepartmentScreen> {
           ),
         ),
         reusableTextFormField(
-          label: 'Section Title',
-          onChanged: (value) {
-            titles[index] = value;
-            return null;
-          },
-          controller: departmentNameController,
-          keyboardType: TextInputType.text,
-          onTap: () {},
-        ),
-        reusableTextFormField(
           label: 'Section Description',
           onChanged: (value) {
             descriptions[index] = value;
@@ -423,26 +415,22 @@ class _AddDepartmentScreenState extends State<AddDepartmentScreen> {
         return;
       }
 
-      // Create a reference to the department document
       final departmentRef = firestore
           .collection('Universities')
           .doc(universityId)
           .collection('Departments')
-          .doc(); // Generate a new document ID for the department
+          .doc();
 
-      // Set the initial department data
       await departmentRef.set({
         'name': mainTitle,
         'description': mainDescription,
         'isUndergraduate': isUnderGraduateList,
         'isPostgraduate': isPostGraduateList,
         'sectionImages': [],
-        'sectionTitles': [],
         'sectionDescriptions': [],
         'universityId': universityId,
       });
 
-      // Create a batch to perform multiple writes atomically
       WriteBatch batch = firestore.batch();
 
       if (mainImage != null) {
@@ -453,7 +441,6 @@ class _AddDepartmentScreenState extends State<AddDepartmentScreen> {
         if (snapshot.state == firebase_storage.TaskState.success) {
           final imageUrl = await storageRef.getDownloadURL();
 
-          // Update the department data with the image URL
           batch.update(departmentRef, {
             'mainImage': imageUrl,
           });
@@ -478,18 +465,24 @@ class _AddDepartmentScreenState extends State<AddDepartmentScreen> {
 
           batch.update(departmentRef, {
             'sectionImages': FieldValue.arrayUnion([imageUrl]),
-            'sectionTitles': FieldValue.arrayUnion([titles[i]]),
             'sectionDescriptions': FieldValue.arrayUnion([descriptions[i]]),
           });
       }
 
-      // Commit the batch to execute all writes atomically
       await batch.commit();
 
       setState(() {
         isUploading = false;
-        nameController.clear();
-        departmentController.clear();
+        mainImage = null;
+        mainTitle = null;
+        mainDescription = null;
+        sectionNumber = 0;
+        isUnderGraduateList = false;
+        isPostGraduateList = false;
+        images = [];
+        descriptions = [];
+        departmentNameController.clear();
+        departmentDescriptionController.clear();
       });
     } catch (error) {
       print('Error uploading department: $error');
