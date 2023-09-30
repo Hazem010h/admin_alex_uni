@@ -104,10 +104,11 @@ class _AddNewsScreenState extends State<AddNewsScreen> {
                 });
               },
             ),
+            if (sectionNumber > 0)
             const SizedBox(
               height: 10,
             ),
-            if (sectionNumber > 1)
+            if (sectionNumber > 0)
               reusableElevatedButton(
                 label: 'delete section',
                 backColor: Colors.red,
@@ -265,17 +266,15 @@ class _AddNewsScreenState extends State<AddNewsScreen> {
           .collection('News')
           .doc();
 
-      // Set the initial department data
       await newRef.set({
         'title': articleTitleController.text,
-        'mainDescription': mainDescription.text,
-        'headlineImage': null,
         'images': [],
-        'descriptions': [],
+        'descriptions': [
+          mainDescription.text,
+        ],
 
       });
 
-      // Create a batch to perform multiple writes atomically
       WriteBatch batch = firestore.batch();
 
       if (headlineImage != null) {
@@ -285,10 +284,8 @@ class _AddNewsScreenState extends State<AddNewsScreen> {
         final snapshot = await uploadTask;
         if (snapshot.state == firebase_storage.TaskState.success) {
           final imageUrl = await storageRef.getDownloadURL();
-
-          // Update the department data with the image URL
           batch.update(newRef, {
-            'headlineImage': imageUrl,
+            'images': FieldValue.arrayUnion([imageUrl]),
           });
         } else {
           print('Error uploading image: ');
@@ -317,7 +314,7 @@ class _AddNewsScreenState extends State<AddNewsScreen> {
 
       await batch.commit();
       setState(() {
-        sectionNumber = 1;
+        sectionNumber = 0;
         headlineImage = null;
         articleTitleController.clear();
         mainDescription.clear();

@@ -423,11 +423,12 @@ class _AddDepartmentScreenState extends State<AddDepartmentScreen> {
 
       await departmentRef.set({
         'name': mainTitle,
-        'description': mainDescription,
         'isUndergraduate': isUnderGraduateList,
         'isPostgraduate': isPostGraduateList,
         'sectionImages': [],
-        'sectionDescriptions': [],
+        'sectionDescriptions': [
+          mainDescription,
+        ],
         'universityId': universityId,
       });
 
@@ -442,7 +443,7 @@ class _AddDepartmentScreenState extends State<AddDepartmentScreen> {
           final imageUrl = await storageRef.getDownloadURL();
 
           batch.update(departmentRef, {
-            'mainImage': imageUrl,
+            'sectionImages': FieldValue.arrayUnion([imageUrl]),
           });
         } else {
           print('Error uploading image: ');
