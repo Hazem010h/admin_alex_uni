@@ -305,6 +305,7 @@ class _AddAdminScreenState extends State<AddAdminScreen> {
                               ),
                             ),
                           ),
+
                         ],
                       ),
                     if (cubit.departments.isNotEmpty && cubit.currentSelectedUniversity != null)
@@ -340,6 +341,13 @@ class _AddAdminScreenState extends State<AddAdminScreen> {
                             setState(() {
                               cubit.currentSelectedDepartment = value;
 
+                              print('${cubit.currentSelectedDepartment!.name}');
+                              print('${cubit.currentSelectedDepartment!}');
+                              print('${cubit.currentSelectedDepartment!.id}');
+                              print('${cubit.currentSelectedDepartment!.postGraduate}');
+
+                              print('${cubit.currentSelectedDepartment!.underGraduate}');
+
                               // Clear the department error when a selection is made
                               departmentError = null;
                             });
@@ -354,43 +362,46 @@ class _AddAdminScreenState extends State<AddAdminScreen> {
                           fontSize: 12.0,
                         ),
                       ),
+
                     const  SizedBox(
                       height: 10.0,
                     ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          if(cubit.currentSelectedDepartment!=null && cubit.currentSelectedDepartment!.underGraduate==true)
-                            const   Text('Under Graduate'),
-                          if(cubit.currentSelectedDepartment!=null && cubit.currentSelectedDepartment!.underGraduate==true)
-                            Checkbox(
-                              value: underGraduateCheckbox,
-                              onChanged: (value) {
-                                setState(() {
-                                  underGraduateCheckbox = value!;
-                                });
-                              },
-                            ),
-                          if(cubit.currentSelectedDepartment!=null && cubit.currentSelectedDepartment!.postGraduate==true)
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        if(cubit.currentSelectedDepartment!=null && cubit.currentSelectedDepartment!.underGraduate==true)
+                          const Text('Under Graduate'),
+                        if(cubit.currentSelectedDepartment!=null && cubit.currentSelectedDepartment!.underGraduate==true)
+                          Checkbox(
+                            value: underGraduateCheckbox,
+                            onChanged: (value) {
+                              setState(() {
+                                underGraduateCheckbox = value!;
 
-                            const   Text('Post Graduate'),
-                          if(cubit.currentSelectedDepartment!=null && cubit.currentSelectedDepartment!.postGraduate==true)
+                              });
+                            },
+                          ),
+                        const SizedBox(
+                          width: 30,
+                        ),
+                        if(cubit.currentSelectedDepartment!=null && cubit.currentSelectedDepartment!.postGraduate==true)
+                          const Text('Post Graduate'),
+                        if(cubit.currentSelectedDepartment!=null && cubit.currentSelectedDepartment!.postGraduate==true)
+                          Checkbox(
+                            value: postGraduateCheckbox,
+                            onChanged: (value) {
+                              setState(() {
+                                postGraduateCheckbox = value!;
+                              });
+                            },
+                          ),
 
-                            Checkbox(
-                              value: postGraduateCheckbox,
-                              onChanged: (value) {
-                                setState(() {
-                                  postGraduateCheckbox = value!;
-                                });
-                              },
-                            ),
-                        ],
-                      ),
+
+                      ],
                     ),
+
                     const   SizedBox(
-                      height: 10.0,
+                      height: 40.0,
                     ),
                     ConditionalBuilder(
                       condition: isUploading == false ||

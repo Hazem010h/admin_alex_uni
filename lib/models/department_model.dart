@@ -23,8 +23,8 @@ class DepartmentModel{
     universityId = json['universityId'];
     name = json['name'];
     departmentImage = json['departmentImage'];
-    underGraduate = json['underGraduate'];
-    postGraduate = json['postGraduate'];
+    underGraduate = json['isUndergraduate'];
+    postGraduate = json['isPostgraduate'];
     description = json['description'];
   }
 
@@ -35,8 +35,8 @@ class DepartmentModel{
       'departmentImage': departmentImage,
       'description': description,
       'name': name,
-      'underGraduate': underGraduate,
-      'postGraduate': postGraduate,
+      'isUndergraduate': underGraduate,
+      'isPostgraduate': postGraduate,
     };
   }
 }

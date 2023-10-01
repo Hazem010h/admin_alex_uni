@@ -379,6 +379,8 @@ class _AddDepartmentScreenState extends State<AddDepartmentScreen> {
           onChanged: (value) {
             descriptions[index] = value;
             return null;
+
+
           },
           controller: departmentDescriptionController,
           keyboardType: TextInputType.text,
@@ -387,6 +389,7 @@ class _AddDepartmentScreenState extends State<AddDepartmentScreen> {
         const SizedBox(
           height: 10,
         ),
+
       ],
     );
   }

@@ -164,6 +164,7 @@ class AppCubit extends Cubit<AppStates> {
         DepartmentModel currentDepartment =
             DepartmentModel.fromJson(element.data());
         currentDepartment.id = element.id;
+
         departments.add(currentDepartment);
       });
 

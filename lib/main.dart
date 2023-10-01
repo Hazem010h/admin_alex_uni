@@ -8,6 +8,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'cache_helper.dart';
 import 'constants.dart';
 import 'cubit/app_cubit.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+
 import 'cubit/bloc_observer.dart';
 import 'firebase_options.dart';
 
@@ -82,6 +84,11 @@ class _MyAppState extends State<MyApp> {
         supportedLocales: const [
           Locale('en', ''),
           Locale('ar', ''),
+        ],
+        localizationsDelegates:  [
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
         ],
         // localizationsDelegates: const [
         //   GlobalMaterialLocalizations.delegate,
