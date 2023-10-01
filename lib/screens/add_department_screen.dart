@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:admin_alex_uni/constants.dart';
 import 'package:admin_alex_uni/cubit/app_cubit.dart';
 import 'package:admin_alex_uni/cubit/app_states.dart';
 import 'package:admin_alex_uni/reusable_widgets.dart';
@@ -103,19 +104,19 @@ class _AddDepartmentScreenState extends State<AddDepartmentScreen> {
                         mainImage;
                       });
                     },
-                    child: const Text('Pick Image'),
+                    child:  Text(lang=='en'?'Pick Image':'اختر صورة'),
                   ),
                 ),
                 const SizedBox(
                   height: 10,
                 ),
-                const Row(
+                 Row(
                   children: [
                     Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 8.0),
+                      padding:const EdgeInsets.symmetric(horizontal: 8.0),
                       child: Text(
-                        'Choose Faculty',
-                        style: TextStyle(
+                        lang=='en'?'Choose University':'اختر الجامعة',
+                        style:const TextStyle(
                           fontSize: 16.0,
                           fontWeight: FontWeight.bold,
                         ),
@@ -162,7 +163,7 @@ class _AddDepartmentScreenState extends State<AddDepartmentScreen> {
                   height: 5,
                 ),
                 reusableTextFormField(
-                  label: 'Department Name (required)',
+                  label: lang=='en'?'Department Name (required)':'اسم القسم (مطلوب)',
                   onChanged: (value) {
                     mainTitle = value;
                     return null;
@@ -172,7 +173,7 @@ class _AddDepartmentScreenState extends State<AddDepartmentScreen> {
                   onTap: () {},
                 ),
                 reusableTextFormField(
-                  label: 'Department Description (required)',
+                  label: lang=='en'?'Department Description (required)':'وصف القسم (مطلوب)',
                   onChanged: (value) {
                     mainDescription = value;
                     return null;
@@ -187,10 +188,10 @@ class _AddDepartmentScreenState extends State<AddDepartmentScreen> {
                 Container(
                   width: double.infinity,
                   padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                  child: const Text(
-                    'Choose Department Type\n(required one or both)',
+                  child:  Text(
+                   lang=='en'? 'Choose Department Type\n(required one or both)': 'اختر نوع القسم (مطلوب واحد أو كلاهما)',
                     textAlign: TextAlign.start,
-                    style: TextStyle(
+                    style:const TextStyle(
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -198,9 +199,9 @@ class _AddDepartmentScreenState extends State<AddDepartmentScreen> {
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 8.0),
                   child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Text('Undergraduate'),
+                       Text(lang=='en'?'Undergraduate':'المرحلة الجامعية'),
                       Checkbox(
                         value: isUnderGraduateList ?? false,
                         onChanged: (value) {
@@ -209,7 +210,10 @@ class _AddDepartmentScreenState extends State<AddDepartmentScreen> {
                           });
                         },
                       ),
-                      const Text('Postgraduate'),
+                       SizedBox(
+                         width: 30,
+                       ),
+                       Text(lang=='en'?'Postgraduate':'المرحلة العليا'),
                       Checkbox(
                         value: isPostGraduateList ?? false,
                         onChanged: (value) {
@@ -238,7 +242,7 @@ class _AddDepartmentScreenState extends State<AddDepartmentScreen> {
                   itemCount: sectionNumber,
                 ),
                 reusableElevatedButton(
-                  label: 'add section',
+                  label: lang=='en'?'Add section':'إضافة قسم',
                   backColor: Colors.green,
                   function: () {
                     setState(() {
@@ -251,7 +255,7 @@ class _AddDepartmentScreenState extends State<AddDepartmentScreen> {
                 ),
                 if (sectionNumber > 0)
                   reusableElevatedButton(
-                    label: 'delete section',
+                    label: lang=='en'?'Remove section':'حذف قسم',
                     backColor: Colors.red,
                     function: () {
                       setState(() {
@@ -266,9 +270,9 @@ class _AddDepartmentScreenState extends State<AddDepartmentScreen> {
                     height: 10,
                   ),
                 if (showErrorMessage)
-                  const Text(
-                    'Please fill all required fields',
-                    style: TextStyle(
+                   Text(
+                    lang=='en'?'Please fill all required fields':'يرجى ملء جميع الحقول المطلوبة',
+                    style:const TextStyle(
                       color: Colors.red,
                     ),
                   ),
@@ -278,7 +282,7 @@ class _AddDepartmentScreenState extends State<AddDepartmentScreen> {
                   ),
                 if (!isUploading)
                 reusableElevatedButton(
-                  label: 'Save',
+                  label:lang=='en'? 'Save':'حفظ',
                   function: () async {
                     if (mainTitle == null ||
                         mainDescription == null ||
@@ -335,7 +339,7 @@ class _AddDepartmentScreenState extends State<AddDepartmentScreen> {
         Padding(
           padding: const EdgeInsets.all(8.0),
           child: Text(
-            'Section: ${index + 1}',
+           lang=='en'? 'Section: ${index + 1}':'القسم: ${index + 1}',
             style: const TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.bold,
@@ -371,11 +375,11 @@ class _AddDepartmentScreenState extends State<AddDepartmentScreen> {
                 images[index];
               });
             },
-            child: const Text('Pick Image'),
+            child:  Text(lang=='en'?'Pick Image':'اختر صورة'),
           ),
         ),
         reusableTextFormField(
-          label: 'Section Description',
+          label: lang=='en'?'Section Description (required)':'وصف القسم (مطلوب)',
           onChanged: (value) {
             descriptions[index] = value;
             return null;

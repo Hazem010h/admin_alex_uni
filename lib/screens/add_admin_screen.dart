@@ -1,11 +1,11 @@
 import 'package:admin_alex_uni/cubit/app_cubit.dart';
 import 'package:admin_alex_uni/cubit/app_states.dart';
-import 'package:admin_alex_uni/models/admin_model.dart';
+
 import 'package:admin_alex_uni/reusable_widgets.dart';
 import 'package:conditional_builder_null_safety/conditional_builder_null_safety.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:firebase_storage/firebase_storage.dart' as firabase_storage;
+
 import 'package:intl_phone_field/intl_phone_field.dart';
 import '../cache_helper.dart';
 import '../constants.dart';
@@ -36,8 +36,11 @@ class _AddAdminScreenState extends State<AddAdminScreen> {
   String? universityError;
   String? departmentError;
 
+
   @override
   Widget build(BuildContext context) {
+
+
     return BlocConsumer<AppCubit, AppStates>(
       listener: (context, state) {
         if (state is AdminRegesterErrorState) {
@@ -49,6 +52,7 @@ class _AddAdminScreenState extends State<AddAdminScreen> {
         }
       },
       builder: (context, state) {
+
         AppCubit cubit = AppCubit.get(context);
 
         return Scaffold(
@@ -112,12 +116,14 @@ class _AddAdminScreenState extends State<AddAdminScreen> {
                     // SizedBox(
                     //   height: 10.0,
                     // ),
-                    const  Row(
+                      Row(
                       children: [
                         Padding(
-                          padding:  EdgeInsets.symmetric(horizontal: 8.0),
-                          child: Text('name',
-                            style: TextStyle(
+                          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                          child: Text(
+
+                            lang=='en'? 'Name':'الاسم',
+                            style:const TextStyle(
                               fontSize: 16.0,
                               fontWeight: FontWeight.bold,
                             ),),
@@ -125,7 +131,7 @@ class _AddAdminScreenState extends State<AddAdminScreen> {
                       ],
                     ),
                     reusableTextFormField(
-                        label: 'Name',
+                        label: lang=='en'?'Name':'الاسم',
                         onTap: (){},
                         controller: nameController,
                         keyboardType: TextInputType.text),
@@ -137,12 +143,14 @@ class _AddAdminScreenState extends State<AddAdminScreen> {
                           fontSize: 12.0,
                         ),
                       ),
-                    const  Row(
+                      Row(
                       children: [
                         Padding(
-                          padding:  EdgeInsets.symmetric(horizontal: 8.0),
-                          child: Text('email',
-                            style: TextStyle(
+                          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                          child: Text(
+
+                            lang=='en'? 'email':'البريد الالكتروني',
+                            style:const TextStyle(
                               fontSize: 16.0,
                               fontWeight: FontWeight.bold,
                             ),),
@@ -150,7 +158,9 @@ class _AddAdminScreenState extends State<AddAdminScreen> {
                       ],
                     ),
                     reusableTextFormField(
-                        label: 'email',
+                        label:
+
+                        lang=='en'? 'email':'البريد الالكتروني',
                         onTap: (){},
                         controller: emailController,
                         keyboardType: TextInputType.emailAddress),
@@ -162,12 +172,13 @@ class _AddAdminScreenState extends State<AddAdminScreen> {
                           fontSize: 12.0,
                         ),
                       ),
-                    const  Row(
+                      Row(
                       children: [
                         Padding(
-                          padding:  EdgeInsets.symmetric(horizontal: 8.0),
-                          child: Text('password',
-                            style: TextStyle(
+                          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                          child: Text(
+                            lang=='en'? 'password':'كلمه السر',
+                            style:const TextStyle(
                               fontSize: 16.0,
                               fontWeight: FontWeight.bold,
                             ),),
@@ -175,7 +186,7 @@ class _AddAdminScreenState extends State<AddAdminScreen> {
                       ],
                     ),
                     reusableTextFormField(
-                        label: 'password',
+                        label:  lang=='en'? 'password':'كلمه السر',
                         onTap: (){},
                         controller: passwordController,
                         keyboardType: TextInputType.visiblePassword),
@@ -187,12 +198,12 @@ class _AddAdminScreenState extends State<AddAdminScreen> {
                           fontSize: 12.0,
                         ),
                       ),
-                    const  Row(
+                      Row(
                       children: [
                         Padding(
-                          padding:  EdgeInsets.symmetric(horizontal: 8.0),
-                          child: Text('phone',
-                            style: TextStyle(
+                          padding:const  EdgeInsets.symmetric(horizontal: 8.0),
+                          child: Text(lang=='en'? 'Phone':'رقم الهاتف',
+                            style: const TextStyle(
                               fontSize: 16.0,
                               fontWeight: FontWeight.bold,
                             ),),
@@ -223,14 +234,15 @@ class _AddAdminScreenState extends State<AddAdminScreen> {
 
 
 
+
                       },
                     ),
-                    const   Row(
+                       Row(
                       children: [
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 8.0),
                           child: Text(
-                            'Choose Faculty',
+                            lang=='en'? 'University Name':'اسم الجامعه',
                             style: TextStyle(
                               fontSize: 16.0,
                               fontWeight: FontWeight.bold,
@@ -293,13 +305,13 @@ class _AddAdminScreenState extends State<AddAdminScreen> {
                       height: 10.0,
                     ),
                     if(cubit.departments.isNotEmpty && cubit.currentSelectedUniversity!=null)
-                      const    Row(
+                          Row(
                         children: [
                           Padding(
-                            padding:EdgeInsets.symmetric(horizontal: 8.0),
+                            padding:const EdgeInsets.symmetric(horizontal: 8.0),
                             child: Text(
-                              'Department Name',
-                              style: TextStyle(
+                              lang=='en'? 'Department Name':'اسم القسم',
+                              style:const TextStyle(
                                 fontSize: 16.0,
                                 fontWeight: FontWeight.bold,
                               ),
@@ -370,7 +382,7 @@ class _AddAdminScreenState extends State<AddAdminScreen> {
                         mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         if(cubit.currentSelectedDepartment!=null && cubit.currentSelectedDepartment!.underGraduate==true)
-                          const Text('Under Graduate'),
+                           Text(lang=='en'?'Under Graduate':'المرحلة الجامعية'),
                         if(cubit.currentSelectedDepartment!=null && cubit.currentSelectedDepartment!.underGraduate==true)
                           Checkbox(
                             value: underGraduateCheckbox,
@@ -385,7 +397,7 @@ class _AddAdminScreenState extends State<AddAdminScreen> {
                           width: 30,
                         ),
                         if(cubit.currentSelectedDepartment!=null && cubit.currentSelectedDepartment!.postGraduate==true)
-                          const Text('Post Graduate'),
+                           Text(lang=='en'?'Post Graduate':'المرحلة العليا'),
                         if(cubit.currentSelectedDepartment!=null && cubit.currentSelectedDepartment!.postGraduate==true)
                           Checkbox(
                             value: postGraduateCheckbox,
@@ -413,32 +425,27 @@ class _AddAdminScreenState extends State<AddAdminScreen> {
                               label: lang=='ar'?'اضافه':'Add',
                               backColor: defaultColor,
                               function: () {
-                                universityError = null;
-                                departmentError = null;
-                                nameError = null;
-                                emailError = null;
-                                passwordError = null;
-                                phoneError = null;
+
                                 if (cubit.currentSelectedUniversity == null) {
-                                  universityError = 'Select a university';
+                                  universityError = lang=='en'?'Select a university':'اختر جامعه';
                                 }
                                 // Check if no department is selected
                                 if (cubit.departments.isNotEmpty &&
                                     cubit.currentSelectedUniversity != null &&
                                     cubit.currentSelectedDepartment == null) {
-                                  departmentError = 'Select a department';
+                                  departmentError = lang=='en'?'Select a department':'اختر قسم';
                                 }
                                 if (nameController.text.isEmpty) {
-                                  nameError = 'Name is required';
+                                  nameError = lang=='en'?'Name is required':'الاسم مطلوب';
                                 }
                                 if (emailController.text.isEmpty) {
-                                  emailError = 'Email is required';
+                                  emailError = lang=='en'?'Email is required':'البريد الالكتروني مطلوب';
                                 }
                                 if (passwordController.text.isEmpty) {
-                                  passwordError = 'Password is required';
+                                  passwordError = lang=='en'?'Password is required':'كلمه السر مطلوبه';
                                 }
                                 if (phoneController.text.isEmpty) {
-                                  phoneError = 'Phone is required';
+                                  phoneError = lang=='en'?'Phone is required':'رقم الهاتف مطلوب';
                                 }
 
                                   cubit.AdminRegester(

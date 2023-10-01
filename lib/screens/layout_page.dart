@@ -7,7 +7,7 @@ import 'package:admin_alex_uni/screens/settings_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../cubit/app_cubit.dart';
-import '../models/admin_model.dart';
+
 
 class LayoutScreen extends StatefulWidget {
   const LayoutScreen({super.key});
@@ -36,7 +36,7 @@ class _LayoutScreenState extends State<LayoutScreen> {
 
           return Scaffold(
             appBar: AppBar(
-              title: const Text('Layout Page'),
+              title:  Text(lang == 'ar' ? 'الرئيسية' : 'Home'),
               actions: [
                 IconButton(
                   onPressed: () async {
@@ -65,22 +65,22 @@ class _LayoutScreenState extends State<LayoutScreen> {
               onTap: (index) {
                 cubit.changeNavBar(index);
               },
-              items: const [
+              items:  [
                 BottomNavigationBarItem(
-                  icon: Icon(Icons.add),
-                  label: 'University',
+                  icon:const Icon(Icons.add),
+                  label: lang == 'ar' ? 'الكليات' : 'Universities',
+                ),
+                BottomNavigationBarItem(
+                  icon:const Icon(Icons.add),
+                  label: lang == 'ar' ? 'الاقسام' : 'Departments',
                 ),
                 BottomNavigationBarItem(
                   icon: Icon(Icons.add),
-                  label: 'Department',
-                ),
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.add),
-                  label: 'News',
+                  label: lang == 'ar' ? 'الأخبار' : 'News',
                 ),
                 BottomNavigationBarItem(
                   icon: Icon(Icons.newspaper),
-                  label: 'Review Posts',
+                  label: lang == 'ar' ? 'مراجعه المنشورات' : 'Review Posts',
                 ),
               ],
             ),
@@ -101,21 +101,21 @@ class _LayoutScreenState extends State<LayoutScreen> {
                             screen: const showAllPosts(),
                           );
                         },
-                        child: const Padding(
-                          padding: EdgeInsets.all(12.0),
+                        child:  Padding(
+                          padding:const EdgeInsets.all(12.0),
                           child: Row(
                             children: [
-                              Icon(
+                              const Icon(
                                 Icons.person,
                               ),
-                              SizedBox(
+                              const  SizedBox(
                                 width: 10,
                               ),
                               Text(
-                                'posts' ,
+                               lang=='en'? 'posts':'المنشورات' ,
                               ),
-                              Spacer(),
-                              Icon(
+                              const   Spacer(),
+                              const   Icon(
                                 Icons.arrow_forward_ios,
                                 size: 14,
                               ),
@@ -141,9 +141,10 @@ class _LayoutScreenState extends State<LayoutScreen> {
                                 width: 10,
                               ),
                               Text(
-                                'rejected Posts',
+                                lang=='en'? 'Rejected Posts':'المنشورات المرفوضة',
+
                               ),
-                              Spacer(),
+                             const  Spacer(),
                               const Icon(
                                 Icons.arrow_forward_ios,
                                 size: 14,

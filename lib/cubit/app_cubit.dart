@@ -12,6 +12,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:image_picker/image_picker.dart';
 import '../cache_helper.dart';
 import '../constants.dart';
+import '../main.dart';
 import '../models/admin_model.dart';
 import '../models/department_model.dart';
 import '../models/post_model.dart';
@@ -41,7 +42,32 @@ class AppCubit extends Cubit<AppStates> {
     AddNewsScreen(),
     ReviewPostsScreen(),
   ];
-
+ changeAppLanguage({
+    required BuildContext context,
+    required Locale? newLocale,
+  }) {
+    if (newLocale != null) {
+      lang = newLocale.toString();
+      CacheHelper.saveData(
+        key: 'lang',
+        value: newLocale.toString(),
+      ).then((value) {
+        MyApp.setLocale(
+          context,
+          newLocale,
+        );
+        // titles = [
+        //   lang == 'en' ? 'Home' : 'الرئيسية',
+        //   lang == 'en' ? 'Chat' : 'المحادثات',
+        //   lang == 'en' ? 'Notifications' : 'الاشعارات',
+        //   lang == 'en' ? 'Settings' : 'الاعدادات',
+        // ];
+        emit(AppChangeLanguageState());
+      }).catchError((e) {
+        emit(AppChangeLanguageErrorState());
+      });
+    }
+  }
   changeNavBar(int index) async {
     currentIndex = index;
     emit(AppChangeNavBarState());

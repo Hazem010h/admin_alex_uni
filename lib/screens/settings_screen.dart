@@ -1,7 +1,7 @@
+import 'package:admin_alex_uni/constants.dart';
 import 'package:admin_alex_uni/cubit/app_cubit.dart';
 import 'package:admin_alex_uni/cubit/app_states.dart';
-import 'package:admin_alex_uni/reusable_widgets.dart';
-import 'package:conditional_builder_null_safety/conditional_builder_null_safety.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_switch/flutter_switch.dart';
@@ -22,7 +22,6 @@ class _SettingScreenState extends State<SettingScreen> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     AppCubit.get(context).getSettings();
     phoneController.text = AppCubit.get(context).adminModel!.phone!;
@@ -35,22 +34,27 @@ class _SettingScreenState extends State<SettingScreen> {
         if (state is UpdateUserDataSuccessState) {
           Navigator.pop(context);
         }
-        if (state is GetSettingsSuccessState) {
-          value = AppCubit.get(context).settings!.reviewPosts!;
-          available = AppCubit.get(context).adminModel!.isAvailable!;
-        }
       },
       builder: (context, state) {
         AppCubit cubit = AppCubit.get(context);
 
         return Scaffold(
           appBar: AppBar(
-            title: const Text('Setting Screen'),
+            title: Text(lang == 'en' ? 'Settings' : 'الاعدادات'),
             actions: [
               IconButton(
-                onPressed: () {
+                onPressed: () async {
+                  // Update user data
                   cubit.updateUserData(phone: phone!, available: available);
+
+                  // Update settings
                   cubit.updateSettings(reviewPosts: value);
+
+                  // Change app language instantly
+                  await cubit.changeAppLanguage(
+                    context: context,
+                    newLocale: lang == 'en' ? const Locale('ar') : const Locale('en'),
+                  );
                 },
                 icon: const Icon(Icons.check),
               ),
@@ -58,83 +62,129 @@ class _SettingScreenState extends State<SettingScreen> {
           ),
           body: Padding(
             padding: const EdgeInsets.all(8.0),
-            child: Center(
-                child: ConditionalBuilder(
-              condition: state is GetSettingsSuccessState,
-              builder: (context) => SingleChildScrollView(
-                child: Column(
-                  children: [
-                    IntlPhoneField(
-                      controller: phoneController,
-                      style: const TextStyle(
-                        color: Colors.black,
-                      ),
-                      decoration: const InputDecoration(
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.all(
-                            Radius.circular(20),
-                          ),
-                          borderSide: BorderSide(
-                            color: Colors.black,
-                          ),
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  IntlPhoneField(
+                    controller: phoneController,
+                    style: const TextStyle(
+                      color: Colors.black,
+                    ),
+                    decoration: const InputDecoration(
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.all(
+                          Radius.circular(20),
+                        ),
+                        borderSide: BorderSide(
+                          color: Colors.black,
                         ),
                       ),
-                      initialCountryCode: 'EG',
-                      onChanged: (data) {
-                        phone = data.completeNumber;
-                      },
                     ),
-                    Row(
-                      children: [
-                        const Text(
-                          'Review Posts',
-                          style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.w500,
-                          ),
+                    initialCountryCode: 'EG',
+                    onChanged: (data) {
+                      phone = data.completeNumber;
+                    },
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  Row(
+                    children: [
+                      Text(
+                        lang == 'en' ? 'Review Posts' : 'مراجعة المنشورات',
+                        style: const TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.w500,
                         ),
-                        const Spacer(),
-                        FlutterSwitch(
-                          showOnOff: true,
-                          activeText: 'on',
-                          inactiveText: 'off',
-                          value: value,
-                          onToggle: (val) {
-                            setState(() {
-                              value = val;
-                            });
+                      ),
+                      const Spacer(),
+                      FlutterSwitch(
+                        showOnOff: true,
+                        activeText: 'on',
+                        inactiveText: 'off',
+                        value: value,
+                        onToggle: (val) {
+                          setState(() {
+                            value = val;
+                          });
+                        },
+                      ),
+                    ],
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  Row(
+                    children: [
+                      Text(
+                        lang == 'en' ? 'Available' : 'متاح',
+                        style: const TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      const Spacer(),
+                      FlutterSwitch(
+                        showOnOff: true,
+                        activeText: 'on',
+                        inactiveText: 'off',
+                        value: available,
+                        onToggle: (val) {
+                          setState(() {
+                            available = val;
+                          });
+                        },
+                      ),
+                    ],
+                  ),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  Row(
+                    children: [
+                      Text(
+                        lang == 'en' ? 'Language' : 'اللغه',
+                        style: const TextStyle(
+                          fontSize: 26,
+                          fontWeight: FontWeight.w600,
+                          color: Color(0xff0D3961),
+                        ),
+                      ),
+                      const Spacer(),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                        ),
+                        child: DropdownButton<Locale>(
+                          autofocus: true,
+                          value: lang == 'en' ? const Locale('en') : const Locale('ar'),
+                          onChanged: (newLocale) {
+                            // Change app language instantly
+                            cubit.changeAppLanguage(
+                              context: context,
+                              newLocale: newLocale,
+                            );
                           },
+                          items: const [
+                            DropdownMenuItem(
+                              value: Locale('en'),
+                              child: Text('English'),
+                            ),
+                            DropdownMenuItem(
+                              value: Locale('ar'),
+                              child: Text('العربية'),
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
-                    Row(
-                      children: [
-                        const Text(
-                          'Available',
-                          style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                        const Spacer(),
-                        FlutterSwitch(
-                          showOnOff: true,
-                          activeText: 'on',
-                          inactiveText: 'off',
-                          value: available,
-                          onToggle: (val) {
-                            setState(() {
-                              available = val;
-                            });
-                          },
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                ],
               ),
-              fallback: (conext) => const CircularProgressIndicator(),
-            )),
+            ),
           ),
         );
       },

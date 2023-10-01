@@ -136,3 +136,8 @@ class DeleteCommentLoadingState extends AppStates{}
 class DeleteCommentSuccessState extends AppStates{}
 class DeleteCommentErrorState extends AppStates{}
 
+
+
+class AppChangeLanguageState extends AppStates{}
+class AppChangeLanguageErrorState extends AppStates{}
+
