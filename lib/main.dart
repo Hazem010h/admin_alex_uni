@@ -9,7 +9,6 @@ import 'cache_helper.dart';
 import 'constants.dart';
 import 'cubit/app_cubit.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-
 import 'cubit/bloc_observer.dart';
 import 'firebase_options.dart';
 
@@ -34,9 +33,7 @@ void main() async {
     startPage = const SplashScreen();
   }
 
-  runApp(MyApp(
-    startPage: startPage,
-  ));
+  runApp(MyApp(startPage: startPage,));
 }
 
 class MyApp extends StatefulWidget {
@@ -85,16 +82,11 @@ class _MyAppState extends State<MyApp> {
           Locale('en', ''),
           Locale('ar', ''),
         ],
-        localizationsDelegates:  [
+        localizationsDelegates:  const [
             GlobalMaterialLocalizations.delegate,
             GlobalWidgetsLocalizations.delegate,
             GlobalCupertinoLocalizations.delegate,
         ],
-        // localizationsDelegates: const [
-        //   GlobalMaterialLocalizations.delegate,
-        //   GlobalWidgetsLocalizations.delegate,
-        //   GlobalCupertinoLocalizations.delegate,
-        // ],
         theme: ThemeData(
           primarySwatch: Colors.blue,
           scaffoldBackgroundColor: Colors.white,

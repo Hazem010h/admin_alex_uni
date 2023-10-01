@@ -53,7 +53,8 @@ class _SettingScreenState extends State<SettingScreen> {
                   // Change app language instantly
                   await cubit.changeAppLanguage(
                     context: context,
-                    newLocale: lang == 'en' ? const Locale('ar') : const Locale('en'),
+                    newLocale:
+                        lang == 'en' ? const Locale('ar') : const Locale('en'),
                   );
                 },
                 icon: const Icon(Icons.check),
@@ -98,6 +99,14 @@ class _SettingScreenState extends State<SettingScreen> {
                         ),
                       ),
                       const Spacer(),
+                      Switch(
+                          value: value,
+                          onChanged: (val) {
+                            setState(() {
+                                value = val;
+                              },
+                            );
+                          }),
                       FlutterSwitch(
                         showOnOff: true,
                         activeText: 'on',
@@ -157,7 +166,9 @@ class _SettingScreenState extends State<SettingScreen> {
                         ),
                         child: DropdownButton<Locale>(
                           autofocus: true,
-                          value: lang == 'en' ? const Locale('en') : const Locale('ar'),
+                          value: lang == 'en'
+                              ? const Locale('en')
+                              : const Locale('ar'),
                           onChanged: (newLocale) {
                             // Change app language instantly
                             cubit.changeAppLanguage(

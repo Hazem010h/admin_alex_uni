@@ -1,6 +1,7 @@
 import 'package:admin_alex_uni/constants.dart';
 import 'package:admin_alex_uni/cubit/app_states.dart';
 import 'package:admin_alex_uni/reusable_widgets.dart';
+import 'package:admin_alex_uni/screens/add_news_screen/choose_language_screen.dart';
 import 'package:admin_alex_uni/screens/all_posts_screen.dart';
 import 'package:admin_alex_uni/screens/rejected_posts_screen.dart';
 import 'package:admin_alex_uni/screens/settings_screen.dart';
@@ -75,11 +76,7 @@ class _LayoutScreenState extends State<LayoutScreen> {
                   label: lang == 'ar' ? 'الاقسام' : 'Departments',
                 ),
                 BottomNavigationBarItem(
-                  icon: Icon(Icons.add),
-                  label: lang == 'ar' ? 'الأخبار' : 'News',
-                ),
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.newspaper),
+                  icon: const Icon(Icons.newspaper),
                   label: lang == 'ar' ? 'مراجعه المنشورات' : 'Review Posts',
                 ),
               ],
@@ -91,9 +88,6 @@ class _LayoutScreenState extends State<LayoutScreen> {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-
-
-
                       InkWell(
                         onTap: () {
                           navigateTo(
@@ -128,7 +122,7 @@ class _LayoutScreenState extends State<LayoutScreen> {
                       ),
                       InkWell(
                         onTap: () {
-                          navigateTo(context: context, screen: rejectedPostsPage());
+                          navigateTo(context: context, screen: const rejectedPostsPage());
                         },
                         child: Padding(
                           padding: const EdgeInsets.all(12.0),
@@ -153,12 +147,38 @@ class _LayoutScreenState extends State<LayoutScreen> {
                           ),
                         ),
                       ),
-
                       const Divider(
                         thickness: 1,
                       ),
-                      SizedBox(
-                        height: 100,
+                      InkWell(
+                        onTap: () {
+                          navigateTo(context: context, screen: const ChooseLanguageScreen());
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.all(12.0),
+                          child: Row(
+                            children: [
+                              const Icon(
+                                Icons.newspaper,
+                              ),
+                              const SizedBox(
+                                width: 10,
+                              ),
+                              Text(
+                                lang=='en'? 'Add News':'اضافة خبر',
+
+                              ),
+                              const  Spacer(),
+                              const Icon(
+                                Icons.arrow_forward_ios,
+                                size: 14,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      const Divider(
+                        thickness: 1,
                       ),
                       Padding(
                         padding: const EdgeInsets.all(8.0),
