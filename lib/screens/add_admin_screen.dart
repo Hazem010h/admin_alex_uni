@@ -162,7 +162,6 @@ class _AddAdminScreenState extends State<AddAdminScreen> {
                           fontSize: 12.0,
                         ),
                       ),
-
                     const  Row(
                       children: [
                         Padding(
@@ -200,15 +199,17 @@ class _AddAdminScreenState extends State<AddAdminScreen> {
                         ),
                       ],
                     ),
+                    const SizedBox(
+                      height: 5,
+                    ),
                     IntlPhoneField(
                       style: const TextStyle(
                         color: Colors.black,
                       ),
                       decoration: const InputDecoration(
-
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.all(
-                            Radius.circular(20),
+                            Radius.circular(25),
                           ),
                           borderSide: BorderSide(
                             color: Colors.black,
@@ -238,10 +239,9 @@ class _AddAdminScreenState extends State<AddAdminScreen> {
                         ),
                       ],
                     ),
-                    const    SizedBox(
-                      height: 10.0,
+                    const SizedBox(
+                      height: 5,
                     ),
-
                     Container(
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(25.0),
@@ -354,7 +354,6 @@ class _AddAdminScreenState extends State<AddAdminScreen> {
                           fontSize: 12.0,
                         ),
                       ),
-
                     const  SizedBox(
                       height: 10.0,
                     ),
@@ -393,7 +392,6 @@ class _AddAdminScreenState extends State<AddAdminScreen> {
                     const   SizedBox(
                       height: 10.0,
                     ),
-
                     ConditionalBuilder(
                       condition: isUploading == false ||
                           state is! CreateDepartmentLoadingState,
@@ -401,7 +399,8 @@ class _AddAdminScreenState extends State<AddAdminScreen> {
                         children: [
                           Expanded(
                             child: reusableElevatedButton(
-                              label: 'Save',
+                              label: lang=='ar'?'اضافه':'Add',
+                              backColor: defaultColor,
                               function: () {
                                 universityError = null;
                                 departmentError = null;
@@ -412,7 +411,6 @@ class _AddAdminScreenState extends State<AddAdminScreen> {
                                 if (cubit.currentSelectedUniversity == null) {
                                   universityError = 'Select a university';
                                 }
-
                                 // Check if no department is selected
                                 if (cubit.departments.isNotEmpty &&
                                     cubit.currentSelectedUniversity != null &&
@@ -433,7 +431,6 @@ class _AddAdminScreenState extends State<AddAdminScreen> {
                                 }
 
                                   cubit.AdminRegester(
-
                                       name: nameController.text,
                                       password: passwordController.text,
                                       phone: phone!,
@@ -444,12 +441,7 @@ class _AddAdminScreenState extends State<AddAdminScreen> {
                                     isUploading = true;
 
                                   });
-
                                   print('${nameController.text}');
-
-
-
-
                               },
                             ),
                           ),
@@ -459,15 +451,15 @@ class _AddAdminScreenState extends State<AddAdminScreen> {
                           Expanded(
                             child: reusableElevatedButton(
                               label: 'Cancel',
-                              backColor: Colors.white70,
-                              textColor: Colors.blue,
+                              backColor: Colors.red,
+                              textColor: Colors.white,
                               function: () {
                                 setState(() {
                                   cubit.image = null;
                                   nameController.clear();
                                   passwordController.clear();
                                   emailController.clear();
-                                  error = false; // Reset the error flag
+                                  error = false;
                                 });
                               },
                             ),

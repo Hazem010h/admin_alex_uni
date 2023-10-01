@@ -1,3 +1,4 @@
+import 'package:admin_alex_uni/constants.dart';
 import 'package:admin_alex_uni/cubit/app_cubit.dart';
 import 'package:admin_alex_uni/cubit/app_states.dart';
 import 'package:admin_alex_uni/reusable_widgets.dart';
@@ -65,7 +66,7 @@ class _AddUniversityScreenState extends State<AddUniversityScreen> {
                       height: MediaQuery.of(context).size.width * 0.3,
                     ),
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 10.0,
                   ),
                   if (cubit.image == null)
@@ -74,9 +75,9 @@ class _AddUniversityScreenState extends State<AddUniversityScreen> {
                         cubit.pickImage();
                       },
                       child: Text(
-                        'Pick Image',
+                        lang == 'ar' ? 'اختر صورة' : 'Select Image',
                         style: TextStyle(
-                          color: Colors.blue,
+                          color: defaultColor,
                           fontSize: 16.0,
                         ),
                       ),
@@ -87,14 +88,14 @@ class _AddUniversityScreenState extends State<AddUniversityScreen> {
                         cubit.pickImage();
                       },
                       child: Text(
-                        'Change Image',
+                        lang == 'ar' ? 'تغيير الصورة' : 'Change Image',
                         style: TextStyle(
-                          color: Colors.blue,
+                          color: defaultColor,
                           fontSize: 16.0,
                         ),
                       ),
                     ),
-                  SizedBox(
+                  const SizedBox(
                     height: 10.0,
                   ),
                   Row(
@@ -102,8 +103,8 @@ class _AddUniversityScreenState extends State<AddUniversityScreen> {
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 8.0),
                         child: Text(
-                          'University Name',
-                          style: TextStyle(
+                          lang == 'ar' ? 'اسم الجامعة' : 'University Name',
+                          style: const TextStyle(
                             fontSize: 16.0,
                             fontWeight: FontWeight.bold,
                           ),
@@ -112,24 +113,24 @@ class _AddUniversityScreenState extends State<AddUniversityScreen> {
                     ],
                   ),
                   reusableTextFormField(
-                    label: 'University Name',
+                    label: lang == 'ar' ? 'اسم الجامعة' : 'University Name',
                     onTap: () {},
                     controller: nameController,
                     keyboardType: TextInputType.text,
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 10.0,
                   ),
                   if(error)
-                    Text(
-                      'Select Image and Enter University Name',
-                      style: TextStyle(
+                     Text(
+                      lang=='ar'?'من فضلك اختر صورة وادخل اسم الجامعة':'Please select image and enter university name',
+                      style: const TextStyle(
                         color: Colors.red,
                         fontSize: 16.0,
                       ),
                     ),
                   if(error)
-                    SizedBox(
+                    const SizedBox(
                       height: 10.0,
                     ),
                   ConditionalBuilder(
@@ -138,7 +139,8 @@ class _AddUniversityScreenState extends State<AddUniversityScreen> {
                       children: [
                         Expanded(
                           child: reusableElevatedButton(
-                            label: 'Save',
+                            label: lang=='ar'?'اضافة':'Add',
+                            backColor: defaultColor,
                             function: () {
                               if (cubit.image != null && nameController.text.isNotEmpty) {
                                 setState(() {
@@ -157,14 +159,14 @@ class _AddUniversityScreenState extends State<AddUniversityScreen> {
                             },
                           ),
                         ),
-                        SizedBox(
+                        const SizedBox(
                           width: 10.0,
                         ),
                         Expanded(
                           child: reusableElevatedButton(
-                            label: 'Cancel',
+                            label: lang=='ar'?'الغاء':'Cancel',
                             backColor: Colors.white70,
-                            textColor: Colors.blue,
+                            textColor: defaultColor,
                             function: () {
                               setState(() {
                                 cubit.image = null;
@@ -176,7 +178,9 @@ class _AddUniversityScreenState extends State<AddUniversityScreen> {
                       ],
                     ),
                     fallback: (context) => Center(
-                      child: CircularProgressIndicator(),
+                      child: CircularProgressIndicator(
+                        color: defaultColor,
+                      ),
                     ),
                   ),
                 ],

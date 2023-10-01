@@ -170,128 +170,65 @@ class _AdminloginScreenState extends State<AdminloginScreen> {
                                       condition: state is! LoginLoadingState,
                                       builder: (context) {
                                         return Center(
-                                          child: Row(
-                                            mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                            children: [
-                                              InkWell(
-                                                onTap: () {
-                                                  isGuest = true;
-                                                  navigateAndFinish(
-                                                    context: context,
-                                                    screen:
-                                                     AddUniversityScreen(),
-                                                  );
-                                                },
-                                                child: Container(
-                                                  width: MediaQuery.of(context)
-                                                      .size
-                                                      .width /
-                                                      2.5,
-                                                  height: 60,
-                                                  decoration: BoxDecoration(
-                                                    border: Border.all(
-                                                      color: const Color(
-                                                          0xff3E657B),
-                                                    ),
-                                                    borderRadius:
-                                                    BorderRadius.circular(
-                                                        10),
-                                                    color:
-                                                    const Color(0xffffffff),
-                                                  ),
-                                                  child: Center(
-                                                    child: Row(
-                                                      mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .center,
-                                                      children: [
-                                                        Text(
-                                                          isArabic
-                                                              ? 'ضيف'
-                                                              : 'Guest',
-                                                          style:
-                                                          const TextStyle(
-                                                            fontSize: 26,
-                                                            color: Color(
-                                                                0xff3E657B),
-                                                            fontWeight:
-                                                            FontWeight.w600,
-                                                          ),
-                                                        ),
-                                                        const SizedBox(
-                                                          width: 20,
-                                                        ),
-                                                        const Icon(
-                                                          Icons
-                                                              .arrow_forward_ios_outlined,
-                                                          color:
-                                                          Color(0xff3E657B),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ),
-                                                ),
+                                          child: GestureDetector(
+                                            onTap: () {
+                                              if (formKey.currentState!
+                                                  .validate()) {
+                                                cubit.userLogin(
+                                                  email: globalEmail!,
+                                                  password: globalPassword!,
+                                                );
+                                              }
+                                            },
+                                            child: Container(
+                                              padding: const EdgeInsets.symmetric(
+                                                horizontal: 20,
+                                                vertical: 10,
                                               ),
-                                              const SizedBox(
-                                                width: 10,
+                                              decoration: BoxDecoration(
+                                                borderRadius:
+                                                BorderRadius.circular(
+                                                    10),
+                                                color:
+                                                const Color(0xff3E657B),
                                               ),
-                                              GestureDetector(
-                                                onTap: () {
-                                                  if (formKey.currentState!
-                                                      .validate()) {
-                                                    cubit.userLogin(
-                                                      email: globalEmail!,
-                                                      password: globalPassword!,
-                                                    );
-                                                  }
-                                                },
-                                                child: Container(
-                                                  width: MediaQuery.of(context)
-                                                      .size
-                                                      .width /
-                                                      2.5,
-                                                  height: 60,
-                                                  decoration: BoxDecoration(
-                                                    borderRadius:
-                                                    BorderRadius.circular(
-                                                        10),
-                                                    color:
-                                                    const Color(0xff3E657B),
-                                                  ),
-                                                  child: Center(
-                                                    child: Row(
-                                                      mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .center,
-                                                      children: [
-                                                        Text(
-                                                          isArabic
-                                                              ? 'تسجيل'
-                                                              : 'Login',
-                                                          style:
-                                                          const TextStyle(
-                                                            fontSize: 26,
-                                                            color: Colors.white,
-                                                            fontWeight:
-                                                            FontWeight.bold,
-                                                          ),
-                                                          textAlign:
-                                                          TextAlign.center,
-                                                        ),
-                                                        const SizedBox(
-                                                          width: 20,
-                                                        ),
-                                                        const Icon(
-                                                          Icons.arrow_forward,
-                                                          color: Colors.white,
-                                                        ),
-                                                      ],
+                                              child: Row(
+                                                textDirection: lang == 'ar'
+                                                    ? TextDirection.rtl
+                                                    : TextDirection.ltr,
+                                                mainAxisSize: MainAxisSize.min,
+                                                mainAxisAlignment: MainAxisAlignment.center,
+                                                children: [
+                                                  Text(
+                                                    isArabic
+                                                        ? 'تسجيل الدخول'
+                                                        : 'Login',
+                                                    style:
+                                                    const TextStyle(
+                                                      fontSize: 26,
+                                                      color: Colors.white,
+                                                      fontWeight:
+                                                      FontWeight.bold,
                                                     ),
+                                                    textAlign:
+                                                    TextAlign.center,
                                                   ),
-                                                ),
+                                                  const SizedBox(
+                                                    width: 20,
+                                                  ),
+                                                  Icon(
+                                                    Icons.arrow_forward,
+                                                    color: Colors.white,
+                                                    textDirection: lang ==
+                                                        'ar'
+                                                        ? TextDirection
+                                                        .rtl
+                                                        : TextDirection
+                                                        .ltr,
+                                                  ),
+                                                ],
                                               ),
-                                            ],
+                                            ),
                                           ),
                                         );
                                       },
@@ -305,8 +242,10 @@ class _AdminloginScreenState extends State<AdminloginScreen> {
                                       height: 25,
                                     ),
                                     Row(
-                                      mainAxisAlignment:
-                                      MainAxisAlignment.center,
+                                      textDirection: lang == 'ar'
+                                          ? TextDirection.rtl
+                                          : TextDirection.ltr,
+                                      mainAxisAlignment: MainAxisAlignment.center,
                                       children: [
                                         Text(
                                           isArabic

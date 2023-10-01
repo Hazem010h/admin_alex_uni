@@ -59,6 +59,7 @@ class _LayoutScreenState extends State<LayoutScreen> {
             ),
             body: cubit.screens[cubit.currentIndex],
             bottomNavigationBar: BottomNavigationBar(
+              selectedItemColor: defaultColor,
               type: BottomNavigationBarType.fixed,
               currentIndex: cubit.currentIndex,
               onTap: (index) {

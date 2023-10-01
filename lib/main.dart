@@ -1,5 +1,6 @@
 import 'package:admin_alex_uni/screens/Admin_login_screen.dart';
 import 'package:admin_alex_uni/screens/layout_page.dart';
+import 'package:admin_alex_uni/screens/splash_screen/splash_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -21,11 +22,15 @@ void main() async {
   );
   Widget startPage;
 
+  if(lang != null) {
     if (uId == null) {
       startPage = const AdminloginScreen();
     } else {
       startPage = const LayoutScreen();
     }
+  }else{
+    startPage = const SplashScreen();
+  }
 
   runApp(MyApp(
     startPage: startPage,
@@ -40,15 +45,28 @@ class MyApp extends StatefulWidget {
 
   final Widget startPage;
 
+  static void setLocale(BuildContext context, Locale newLocale) {
+    final _MyAppState state = context.findAncestorStateOfType<_MyAppState>()!;
+    state.setLocale(newLocale);
+  }
+
   @override
   _MyAppState createState() => _MyAppState();
 }
 
 class _MyAppState extends State<MyApp> {
 
+  late Locale _selectedLocale;
 
+  _MyAppState() {
+    _selectedLocale = Locale(lang ?? 'en');
+  }
 
-
+  void setLocale(Locale newLocale) {
+    setState(() {
+      _selectedLocale = newLocale;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -60,6 +78,16 @@ class _MyAppState extends State<MyApp> {
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
+        locale: _selectedLocale,
+        supportedLocales: const [
+          Locale('en', ''),
+          Locale('ar', ''),
+        ],
+        // localizationsDelegates: const [
+        //   GlobalMaterialLocalizations.delegate,
+        //   GlobalWidgetsLocalizations.delegate,
+        //   GlobalCupertinoLocalizations.delegate,
+        // ],
         theme: ThemeData(
           primarySwatch: Colors.blue,
           scaffoldBackgroundColor: Colors.white,
@@ -80,12 +108,8 @@ class _MyAppState extends State<MyApp> {
             ),
           ),
         ),
-
         routes: {
-
           AdminloginScreen.id: (context) => const AdminloginScreen(),
-
-          // ... define other named routes if needed ...
         },
         home: widget.startPage,
       ),
