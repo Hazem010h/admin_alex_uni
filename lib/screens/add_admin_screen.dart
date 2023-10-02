@@ -427,25 +427,87 @@ class _AddAdminScreenState extends State<AddAdminScreen> {
                               function: () {
 
                                 if (cubit.currentSelectedUniversity == null) {
-                                  universityError = lang=='en'?'Select a university':'اختر جامعه';
+                                  setState(() {
+                                    universityError = lang == 'en' ? 'Select a university' : 'اختر جامعه';
+                                  });
+                                } else {
+                                  setState(() {
+                                    universityError = null;
+                                  });
                                 }
-                                // Check if no department is selected
+
                                 if (cubit.departments.isNotEmpty &&
                                     cubit.currentSelectedUniversity != null &&
                                     cubit.currentSelectedDepartment == null) {
-                                  departmentError = lang=='en'?'Select a department':'اختر قسم';
+                                  setState(() {
+                                    departmentError = lang == 'en' ? 'Select a department' : 'اختر قسم';
+                                  });
+                                } else {
+                                  setState(() {
+                                    departmentError = null;
+                                  });
                                 }
+
                                 if (nameController.text.isEmpty) {
-                                  nameError = lang=='en'?'Name is required':'الاسم مطلوب';
+                                  setState(() {
+                                    nameError = lang == 'en' ? 'Name is required' : 'الاسم مطلوب';
+                                  });
+                                } else {
+                                  setState(() {
+                                    nameError = null;
+                                  });
                                 }
+
                                 if (emailController.text.isEmpty) {
-                                  emailError = lang=='en'?'Email is required':'البريد الالكتروني مطلوب';
+                                  setState(() {
+                                    emailError = lang == 'en' ? 'Email is required' : 'البريد الالكتروني مطلوب';
+                                  });
+                                } else {
+                                  setState(() {
+                                    emailError = null;
+                                  });
                                 }
+
                                 if (passwordController.text.isEmpty) {
-                                  passwordError = lang=='en'?'Password is required':'كلمه السر مطلوبه';
+                                  setState(() {
+                                    passwordError = lang == 'en' ? 'Password is required' : 'كلمه السر مطلوبه';
+                                  });
+                                } else {
+                                  setState(() {
+                                    passwordError = null;
+                                  });
                                 }
-                                if (phoneController.text.isEmpty) {
-                                  phoneError = lang=='en'?'Phone is required':'رقم الهاتف مطلوب';
+
+                                if (phoneController.text.isEmpty || phone == '') {
+                                  setState(() {
+                                    phoneError = lang == 'en' ? 'Phone is required' : 'رقم الهاتف مطلوب';
+                                  });
+                                } else {
+                                  setState(() {
+                                    phoneError = null;
+                                    phone = phoneController.text; // Assign the value to the 'phone' variable
+                                  });
+                                }
+
+                                if (universityError == null &&
+                                    departmentError == null &&
+                                    nameError == null &&
+                                    emailError == null &&
+                                    passwordError == null &&
+                                    phoneError == null) {
+                                  // All required fields are filled, proceed with registration
+                                  cubit.AdminRegester(
+                                    name: nameController.text,
+                                    password: passwordController.text,
+                                    phone: phone!,
+                                    email: emailController.text,
+                                    underGraduate: underGraduateCheckbox,
+                                    postGraduate: postGraduateCheckbox,
+                                  );
+                                  setState(() {
+                                    isUploading = true;
+                                  });
+                                  print('${nameController.text}');
                                 }
 
                                   cubit.AdminRegester(
@@ -468,7 +530,7 @@ class _AddAdminScreenState extends State<AddAdminScreen> {
                           ),
                           Expanded(
                             child: reusableElevatedButton(
-                              label: 'Cancel',
+                              label: lang=='ar'?'الغاء':'Cancel',
                               backColor: Colors.red,
                               textColor: Colors.white,
                               function: () {

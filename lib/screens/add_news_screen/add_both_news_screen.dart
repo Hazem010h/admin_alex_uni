@@ -37,10 +37,12 @@ class _AddBothNewsScreenState extends State<AddBothNewsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(lang=='en'?'Add Arabic and English News':'اضافة خبر باللغة العربية و الانجليزية'),
+        title: Text(lang == 'en'
+            ? 'Add Arabic and English News'
+            : 'اضافة خبر باللغة العربية و الانجليزية'),
       ),
       body: SingleChildScrollView(
-        child:  Padding(
+        child: Padding(
           padding: const EdgeInsets.all(8.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -53,13 +55,13 @@ class _AddBothNewsScreenState extends State<AddBothNewsScreen> {
                       : Theme.of(context).scaffoldBackgroundColor,
                   child: headlineImage == null
                       ? IconButton(
-                    onPressed: () {},
-                    icon: Icon(
-                      Icons.add_a_photo,
-                      color: Colors.black,
-                      size: MediaQuery.of(context).size.width * 0.1,
-                    ),
-                  )
+                          onPressed: () {},
+                          icon: Icon(
+                            Icons.add_a_photo,
+                            color: Colors.black,
+                            size: MediaQuery.of(context).size.width * 0.1,
+                          ),
+                        )
                       : Image.file(headlineImage!),
                 ),
               ),
@@ -71,11 +73,13 @@ class _AddBothNewsScreenState extends State<AddBothNewsScreen> {
                       headlineImage;
                     });
                   },
-                  child:  Text(lang=='en'?'Pick Image':'اختر صورة'),
+                  child: Text(lang == 'en' ? 'Pick Image' : 'اختر صورة'),
                 ),
               ),
               reusableTextFormField(
-                label:lang=='en'? 'Article English Title':'عنوان المقالة بالانجليزية',
+                label: lang == 'en'
+                    ? 'Article English Title'
+                    : 'عنوان المقالة بالانجليزية',
                 onTap: () {},
                 controller: articleTitleController,
                 keyboardType: TextInputType.text,
@@ -84,7 +88,9 @@ class _AddBothNewsScreenState extends State<AddBothNewsScreen> {
                 height: 10,
               ),
               reusableTextFormField(
-                label:lang=='en'? 'Article Arabic Title':'عنوان المقالة بالعربية',
+                label: lang == 'en'
+                    ? 'Article Arabic Title'
+                    : 'عنوان المقالة بالعربية',
                 onTap: () {},
                 controller: articleArabicTitleController,
                 keyboardType: TextInputType.text,
@@ -93,7 +99,9 @@ class _AddBothNewsScreenState extends State<AddBothNewsScreen> {
                 height: 10,
               ),
               reusableTextFormField(
-                label: lang=='en'?'Main English Description':'الوصف الرئيسي بالانجليزية',
+                label: lang == 'en'
+                    ? 'Main English Description'
+                    : 'الوصف الرئيسي بالانجليزية',
                 onTap: () {},
                 controller: mainDescription,
                 keyboardType: TextInputType.text,
@@ -102,7 +110,9 @@ class _AddBothNewsScreenState extends State<AddBothNewsScreen> {
                 height: 10,
               ),
               reusableTextFormField(
-                label: lang=='en'?'Main Arabic Description':'الوصف الرئيسي بالعربية',
+                label: lang == 'en'
+                    ? 'Main Arabic Description'
+                    : 'الوصف الرئيسي بالعربية',
                 onTap: () {},
                 controller: mainArabicDescription,
                 keyboardType: TextInputType.text,
@@ -126,118 +136,125 @@ class _AddBothNewsScreenState extends State<AddBothNewsScreen> {
           ),
         ),
       ),
-      bottomNavigationBar: !isUploading? Padding(
-        padding: EdgeInsets.fromLTRB(8,8,8,MediaQuery.of(context).viewInsets.bottom),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            if (showErrors)
-              Text(
-                lang=='en'?'Please fill all fields':'من فضلك املأ جميع الحقول',
-                style:const TextStyle(color: Colors.red),
-              ),
-            if (showErrors)
-              const SizedBox(
-                height: 10,
-              ),
-            Row(
-              children: [
-                Expanded(
-                  child: reusableElevatedButton(
-                    label: lang=='en'?'Add section':'اضافة قسم',
-                    backColor: Colors.green,
-                    function: () {
-                      setState(() {
-                        sectionNumber++;
-                      });
-                    },
-                  ),
-                ),
-                if (sectionNumber > 0)
-                  const SizedBox(
-                    width: 5,
-                  ),
-                if (sectionNumber > 0)
-                  Expanded(
-                    child: reusableElevatedButton(
-                      label: lang=='en'?'Remove section':'حذف قسم',
-                      backColor: Colors.red,
-                      function: () {
-                        setState(() {
-                          sectionNumber--;
-                          images.removeLast();
-                          descriptions.removeLast();
-                        });
-                      },
+      bottomNavigationBar: !isUploading
+          ? Padding(
+              padding: EdgeInsets.fromLTRB(
+                  8, 8, 8, MediaQuery.of(context).viewInsets.bottom),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  if (showErrors)
+                    Text(
+                      lang == 'en'
+                          ? 'Please fill all fields'
+                          : 'من فضلك املأ جميع الحقول',
+                      style: const TextStyle(color: Colors.red),
                     ),
+                  if (showErrors)
+                    const SizedBox(
+                      height: 10,
+                    ),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: reusableElevatedButton(
+                          label: lang == 'en' ? 'Add section' : 'اضافة قسم',
+                          backColor: Colors.green,
+                          function: () {
+                            setState(() {
+                              sectionNumber++;
+                            });
+                          },
+                        ),
+                      ),
+                      if (sectionNumber > 0)
+                        const SizedBox(
+                          width: 5,
+                        ),
+                      if (sectionNumber > 0)
+                        Expanded(
+                          child: reusableElevatedButton(
+                            label: lang == 'en' ? 'Remove section' : 'حذف قسم',
+                            backColor: Colors.red,
+                            function: () {
+                              setState(() {
+                                sectionNumber--;
+                                images.removeLast();
+                                descriptions.removeLast();
+                              });
+                            },
+                          ),
+                        ),
+                      const SizedBox(
+                        width: 5,
+                      ),
+                      Expanded(
+                        child: reusableElevatedButton(
+                          label: lang == 'en' ? 'Save' : 'حفظ',
+                          function: () async {
+                            if (articleTitleController.text.isEmpty ||
+                                mainDescription.text.isEmpty ||
+                                articleArabicTitleController.text.isEmpty ||
+                                mainArabicDescription.text.isEmpty ||
+                                headlineImage == null) {
+                              setState(() {
+                                showErrors = true;
+                              });
+                              return;
+                            }
+                            for (int i = 0; i < images.length; i++) {
+                              if (images[i] == null) {
+                                setState(() {
+                                  showErrors = true;
+                                });
+                                return;
+                              }
+                            }
+                            for (int i = 0; i < descriptions.length; i++) {
+                              if (descriptions[i] == null) {
+                                setState(() {
+                                  showErrors = true;
+                                });
+                                return;
+                              }
+                            }
+                            for (int i = 0;
+                                i < arabicDescriptions.length;
+                                i++) {
+                              if (arabicDescriptions[i] == null) {
+                                setState(() {
+                                  showErrors = true;
+                                });
+                                return;
+                              }
+                            }
+                            setState(() {
+                              showErrors = false;
+                            });
+                            isUploading = true;
+                            await uploadNews();
+                          },
+                        ),
+                      ),
+                    ],
                   ),
-                const SizedBox(
-                 width: 5,
-                ),
-                Expanded(
-                  child: reusableElevatedButton(
-                    label: lang=='en'?'Save':'حفظ',
-                    function: () async {
-                      if (articleTitleController.text.isEmpty ||
-                          mainDescription.text.isEmpty ||
-                          articleArabicTitleController.text.isEmpty ||
-                          mainArabicDescription.text.isEmpty||
-                          headlineImage == null) {
-                        setState(() {
-                          showErrors = true;
-                        });
-                        return;
-                      }
-                      for(int i = 0; i < images.length; i++){
-                        if(images[i] == null){
-                          setState(() {
-                            showErrors = true;
-                          });
-                          return;
-                        }
-                      }
-                      for(int i = 0; i < descriptions.length; i++){
-                        if(descriptions[i] == null){
-                          setState(() {
-                            showErrors = true;
-                          });
-                          return;
-                        }
-                      }
-                      for(int i = 0; i < arabicDescriptions.length; i++){
-                        if(arabicDescriptions[i] == null){
-                          setState(() {
-                            showErrors = true;
-                          });
-                          return;
-                        }
-                      }
-                      setState(() {
-                        showErrors = false;
-                      });
-                      isUploading = true;
-                      await uploadNews();
-                    },
+                  const SizedBox(
+                    height: 8,
                   ),
-                ),
-              ],
+                ],
+              ),
+            )
+          : Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  CircularProgressIndicator(
+                    color: defaultColor,
+                  ),
+                ],
+              ),
             ),
-            const SizedBox(
-              height: 8,
-            ),
-          ],
-        ),
-      ):Padding(
-    padding: const EdgeInsets.all(8.0),
-    child: Row(
-    mainAxisAlignment: MainAxisAlignment.center,
-    children: [
-    CircularProgressIndicator(
-    color: defaultColor,
-    ),
-    ],
-    ),
-    ),
     );
   }
 
@@ -245,8 +262,10 @@ class _AddBothNewsScreenState extends State<AddBothNewsScreen> {
     required BuildContext context,
     required int index,
   }) {
-    TextEditingController sectionDescriptionController = TextEditingController();
-    TextEditingController sectionArabicDescriptionController = TextEditingController();
+    TextEditingController sectionDescriptionController =
+        TextEditingController();
+    TextEditingController sectionArabicDescriptionController =
+        TextEditingController();
 
     if (sectionNumber > images.length) {
       images.add(null);
@@ -254,10 +273,10 @@ class _AddBothNewsScreenState extends State<AddBothNewsScreen> {
       arabicDescriptions.add(null);
     }
 
-    if(descriptions[index]!=null) {
+    if (descriptions[index] != null) {
       sectionDescriptionController.text = descriptions[index]!;
     }
-    if(arabicDescriptions[index]!=null) {
+    if (arabicDescriptions[index] != null) {
       sectionArabicDescriptionController.text = arabicDescriptions[index]!;
     }
 
@@ -267,7 +286,7 @@ class _AddBothNewsScreenState extends State<AddBothNewsScreen> {
         Padding(
           padding: const EdgeInsets.all(8.0),
           child: Text(
-            lang=='en'?'Section: ${index + 1}':'القسم: ${index + 1}',
+            lang == 'en' ? 'Section: ${index + 1}' : 'القسم: ${index + 1}',
             style: const TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.bold,
@@ -300,14 +319,14 @@ class _AddBothNewsScreenState extends State<AddBothNewsScreen> {
                 images;
               });
             },
-            child:  Text(lang=='en'?'Pick Image':'اختر صورة'),
+            child: Text(lang == 'en' ? 'Pick Image' : 'اختر صورة'),
           ),
         ),
         const SizedBox(
           height: 10,
         ),
         reusableTextFormField(
-          label: lang=='en'?'Section Description':'وصف القسم',
+          label: lang == 'en' ? 'Section Description' : 'وصف القسم',
           onTap: () {},
           onChanged: (value) {
             descriptions[index] = value;
@@ -317,7 +336,9 @@ class _AddBothNewsScreenState extends State<AddBothNewsScreen> {
           keyboardType: TextInputType.text,
         ),
         reusableTextFormField(
-          label: lang=='en'?'Section Arabic Description':'وصف القسم بالعربية',
+          label: lang == 'en'
+              ? 'Section Arabic Description'
+              : 'وصف القسم بالعربية',
           onTap: () {},
           onChanged: (value) {
             arabicDescriptions[index] = value;
@@ -347,9 +368,7 @@ class _AddBothNewsScreenState extends State<AddBothNewsScreen> {
     final storage = firebase_storage.FirebaseStorage.instance;
 
     try {
-      final newRef = firestore
-          .collection('News')
-          .doc();
+      final newRef = firestore.collection('News').doc();
 
       DateTime now = DateTime.now();
       String formatter = DateFormat('yyyy-MM-dd').format(now);
@@ -395,14 +414,16 @@ class _AddBothNewsScreenState extends State<AddBothNewsScreen> {
           if (snapshot.state == firebase_storage.TaskState.success) {
             imageUrl = await storageRef.getDownloadURL();
           }
-        }else{
+        } else {
           imageUrl = null;
         }
 
         batch.update(newRef, {
           'images': FieldValue.arrayUnion([imageUrl]),
-          'descriptions': FieldValue.arrayUnion([descriptions[i]==''?null:descriptions[i]]),
-          'arabicDescriptions': FieldValue.arrayUnion([arabicDescriptions[i]==''?null:arabicDescriptions[i]]),
+          'descriptions': FieldValue.arrayUnion(
+              [descriptions[i] == '' ? null : descriptions[i]]),
+          'arabicDescriptions': FieldValue.arrayUnion(
+              [arabicDescriptions[i] == '' ? null : arabicDescriptions[i]]),
         });
       }
 
@@ -411,6 +432,8 @@ class _AddBothNewsScreenState extends State<AddBothNewsScreen> {
         sectionNumber = 0;
         headlineImage = null;
         articleTitleController.clear();
+        articleArabicTitleController.clear();
+
         mainDescription.clear();
         images = [];
         descriptions = [];
