@@ -1,14 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:admin_alex_uni/screens/view_images_screen.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
-import '../comments/comments_screen.dart';
 import '../constants.dart';
 import '../cubit/app_cubit.dart';
 import '../cubit/app_states.dart';
 import '../models/post_model.dart';
 import '../reusable_widgets.dart';
+import 'comments/comments_screen.dart';
 class showAllPosts extends StatefulWidget {
   const showAllPosts({super.key});
 

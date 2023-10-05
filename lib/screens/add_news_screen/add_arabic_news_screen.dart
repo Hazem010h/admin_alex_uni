@@ -320,7 +320,7 @@ class _AddArabicNewsScreenState extends State<AddArabicNewsScreen> {
         'descriptions': [
           mainDescription.text,
         ],
-
+        'isFinished': false,
       });
 
       WriteBatch batch = firestore.batch();
@@ -359,6 +359,10 @@ class _AddArabicNewsScreenState extends State<AddArabicNewsScreen> {
           'descriptions': FieldValue.arrayUnion([descriptions[i]==''?null:descriptions[i]]),
         });
       }
+
+      batch.update(newRef, {
+        'isFinished': true,
+      });
 
       await batch.commit();
       setState(() {

@@ -18,7 +18,7 @@ import '../models/department_model.dart';
 import '../models/post_model.dart';
 import '../reusable_widgets.dart';
 import '../screens/Admin_login_screen.dart';
-import '../screens/add_department_screen.dart';
+import '../screens/add_department_screen/add_department_screen.dart';
 import '../screens/add_university_screen.dart';
 
 class AppCubit extends Cubit<AppStates> {

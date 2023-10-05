@@ -1,6 +1,7 @@
 import 'package:admin_alex_uni/constants.dart';
 import 'package:admin_alex_uni/cubit/app_states.dart';
 import 'package:admin_alex_uni/reusable_widgets.dart';
+import 'package:admin_alex_uni/screens/add_department_screen/add_department_screen.dart';
 import 'package:admin_alex_uni/screens/add_news_screen/choose_language_screen.dart';
 import 'package:admin_alex_uni/screens/all_posts_screen.dart';
 import 'package:admin_alex_uni/screens/rejected_posts_screen.dart';
@@ -21,7 +22,6 @@ class _LayoutScreenState extends State<LayoutScreen> {
   @override
   void initState() {
     super.initState();
-    // TODO: implement initState
     AppCubit.get(context).getAdminData();
     AppCubit.get(context).getPosts();
   }
@@ -72,22 +72,46 @@ class _LayoutScreenState extends State<LayoutScreen> {
                   label: lang == 'ar' ? 'الكليات' : 'Universities',
                 ),
                 BottomNavigationBarItem(
-                  icon:const Icon(Icons.add),
-                  label: lang == 'ar' ? 'الاقسام' : 'Departments',
-                ),
-                BottomNavigationBarItem(
                   icon: const Icon(Icons.newspaper),
                   label: lang == 'ar' ? 'مراجعه المنشورات' : 'Review Posts',
                 ),
               ],
             ),
-
             drawer: isGuest==false? Drawer(
               child: ListView(
                 children: [
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      InkWell(
+                        onTap: () {
+                          navigateTo(
+                            context: context,
+                            screen:  AddDepartmentScreen(),
+                          );
+                        },
+                        child:  Padding(
+                          padding:const EdgeInsets.all(12.0),
+                          child: Row(
+                            children: [
+                              const Icon(
+                                Icons.add,
+                              ),
+                              const  SizedBox(
+                                width: 10,
+                              ),
+                              Text(
+                                lang=='en'? 'Add Department':'اضافة قسم',
+                              ),
+                              const   Spacer(),
+                              const   Icon(
+                                Icons.arrow_forward_ios,
+                                size: 14,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
                       InkWell(
                         onTap: () {
                           navigateTo(
