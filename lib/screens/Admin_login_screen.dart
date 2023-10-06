@@ -36,7 +36,6 @@ class _AdminloginScreenState extends State<AdminloginScreen> {
         listener: (context, state)  async {
           if (state is LoginSuccessState) {
             uId = state.uId;
-            await AppCubit.get(context).getAdminData();
             CacheHelper.saveData(key: 'uId', value: uId).then((value){
               isGuest = false;
               navigateAndFinish(

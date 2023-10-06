@@ -13,7 +13,6 @@ class UserModel {
   String? passportId;
   String? address;
   String? country;
-  bool? underGraduate;
   bool? postGraduate;
 
   List<SavePostsModel>?savedPosts;
@@ -29,7 +28,6 @@ class UserModel {
     required this.phone,
     required this.country,
     required this.universityname,
-    required this.underGraduate,
     required this.postGraduate,
     required this.address,
     required this.passportId,
@@ -47,7 +45,6 @@ class UserModel {
     phone=json['phone'];
     country=json['country'];
     universityname=json['universityname'];
-    underGraduate=json['underGraduate'];
     postGraduate=json['postGraduate'];
 
     address=json['address'];
@@ -67,9 +64,7 @@ class UserModel {
       'phone':phone,
       'country':country,
       'universityname':universityname,
-      'underGraduate':underGraduate,
       'postGraduate':postGraduate,
-
       'address':address,
       'passportId':passportId,
       'savedPosts': savedPosts!.map((e) => e.toMap()).toList(),

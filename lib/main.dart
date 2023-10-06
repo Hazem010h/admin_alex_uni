@@ -14,7 +14,7 @@ import 'firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  Bloc.observer = MyBlocObserver();
+  // Bloc.observer = MyBlocObserver();
   await CacheHelper.init();
   uId = await CacheHelper.getData(key: 'uId');
   lang = await CacheHelper.getData(key: 'lang');
@@ -72,7 +72,7 @@ class _MyAppState extends State<MyApp> {
     return MultiBlocProvider(
       providers: [
         BlocProvider(
-          create: (BuildContext context) => AppCubit()..getAdminData(),
+          create: (BuildContext context) => AppCubit(),
         ),
       ],
       child: MaterialApp(

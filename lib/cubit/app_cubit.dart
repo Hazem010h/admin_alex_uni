@@ -24,16 +24,13 @@ import '../screens/add_university_screen.dart';
 class AppCubit extends Cubit<AppStates> {
   AppCubit() : super(AppInitialState()) {
     getUniversities();
-    getAdminData();
-    print(adminModel);
-    print(uId);
   }
 
   static AppCubit get(context) => BlocProvider.of(context);
 
   int currentIndex = 0;
-  UniversityModel? currentSelectedUniversity = null;
-  DepartmentModel? currentSelectedDepartment = null;
+  UniversityModel? currentSelectedUniversity;
+  DepartmentModel? currentSelectedDepartment;
 
   List<Widget> screens = [
     AddUniversityScreen(),
@@ -136,7 +133,8 @@ class AppCubit extends Cubit<AppStates> {
         currentUniversity.uId = element.id;
         universities.add(currentUniversity);
       });
-      currentSelectedUniversity = universities[0] ?? null;
+      currentSelectedUniversity = universities[0];
+      displayDepartments();
       emit(GetUniversitiesSuccessState());
     }).catchError((onError) {
       emit(GetUniversitiesErrorState(onError.toString()));
@@ -172,7 +170,7 @@ class AppCubit extends Cubit<AppStates> {
   }
 
   List<DepartmentModel> departments = [];
-  void displaydepartments() {
+  void displayDepartments() {
     currentSelectedDepartment = null;
     departments = [];
 
@@ -191,6 +189,7 @@ class AppCubit extends Cubit<AppStates> {
 
         departments.add(currentDepartment);
       });
+      currentSelectedDepartment = departments[0];
 
       emit(GetDepartmentsSuccessState());
     }).catchError((onError) {
