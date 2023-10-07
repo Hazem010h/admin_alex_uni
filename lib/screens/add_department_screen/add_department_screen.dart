@@ -571,6 +571,10 @@ class _AddDepartmentScreenState extends State<AddDepartmentScreen> {
         arabicDescriptions = [];
         departmentNameController.clear();
         departmentDescriptionController.clear();
+        arabicDepartmentNameController.clear();
+        arabicDepartmentDescriptionController.clear();
+        degreeController.clear();
+        arabicDegreeController.clear();
       });
     } catch (error) {
       print('Error uploading department: $error');
