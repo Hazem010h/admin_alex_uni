@@ -26,11 +26,13 @@ class _AddDepartmentScreenState extends State<AddDepartmentScreen> {
   List<File?> images = [];
   File? mainImage;
   String? mainTitle;
+  String? mainTitleArabic;
   String? mainDescription;
   String? arabicMainDescription;
   List<String?> descriptions = [];
   List<String?> arabicDescriptions = [];
   TextEditingController departmentNameController = TextEditingController();
+  TextEditingController arabicDepartmentNameController = TextEditingController();
   TextEditingController departmentDescriptionController = TextEditingController();
   TextEditingController arabicDepartmentDescriptionController = TextEditingController();
 
@@ -170,12 +172,22 @@ class _AddDepartmentScreenState extends State<AddDepartmentScreen> {
                     height: 5,
                   ),
                   reusableTextFormField(
-                    label: lang=='en'?'Department Name (required)':'اسم القسم (مطلوب)',
+                    label: lang=='en'?'Department Name English  (required)':'اسم القسم بالانجليزيه  (مطلوب)',
                     onChanged: (value) {
                       mainTitle = value;
                       return null;
                     },
                     controller: departmentNameController,
+                    keyboardType: TextInputType.text,
+                    onTap: () {},
+                  ),
+                  reusableTextFormField(
+                    label: lang=='en'?'Department Name Arabic (required)':'اسم القسم بالعربيه  (مطلوب)',
+                    onChanged: (value) {
+                      mainTitleArabic = value;
+                      return null;
+                    },
+                    controller: arabicDepartmentNameController,
                     keyboardType: TextInputType.text,
                     onTap: () {},
                   ),
@@ -319,7 +331,7 @@ class _AddDepartmentScreenState extends State<AddDepartmentScreen> {
                             function: () async {
                               if (mainTitle == null ||
                                   mainDescription == null ||
-                                  mainImage == null ||
+                                  mainImage == null ||mainTitleArabic==null||
                                   arabicMainDescription == null ||
                                   (isUnderGraduateList == false &&
                                       isPostGraduateList == false)) {
@@ -484,6 +496,9 @@ class _AddDepartmentScreenState extends State<AddDepartmentScreen> {
         'name': mainTitle,
         'isUndergraduate': isUnderGraduateList,
         'isPostgraduate': isPostGraduateList,
+        'arabicName': mainTitleArabic,
+
+
         'sectionImages': [],
         'sectionDescriptions': [
           mainDescription,
