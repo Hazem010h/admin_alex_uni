@@ -36,6 +36,9 @@ class _AddDepartmentScreenState extends State<AddDepartmentScreen> {
   TextEditingController departmentDescriptionController = TextEditingController();
   TextEditingController arabicDepartmentDescriptionController = TextEditingController();
 
+  TextEditingController degreeController = TextEditingController();
+  TextEditingController arabicDegreeController = TextEditingController();
+
   bool? isUnderGraduateList = false;
   bool? isPostGraduateList = false;
 
@@ -191,6 +194,8 @@ class _AddDepartmentScreenState extends State<AddDepartmentScreen> {
                     keyboardType: TextInputType.text,
                     onTap: () {},
                   ),
+                  reusableTextFormField(label: 'Degree in English', onTap: (){}, controller: degreeController, keyboardType: TextInputType.text,),
+                  reusableTextFormField(label: 'Degree in Arabic', onTap: (){}, controller: arabicDegreeController, keyboardType: TextInputType.text,),
                   reusableTextFormField(
                     label: lang=='en'?'English Department Description (required)':'وصف القسم بالانجليزية (مطلوب)',
                     onChanged: (value) {
@@ -332,6 +337,8 @@ class _AddDepartmentScreenState extends State<AddDepartmentScreen> {
                               if (mainTitle == null ||
                                   mainDescription == null ||
                                   mainImage == null ||mainTitleArabic==null||
+                                  degreeController.text.isEmpty||
+                                  arabicDegreeController.text.isEmpty||
                                   arabicMainDescription == null ||
                                   (isUnderGraduateList == false &&
                                       isPostGraduateList == false)) {
@@ -497,8 +504,8 @@ class _AddDepartmentScreenState extends State<AddDepartmentScreen> {
         'isUndergraduate': isUnderGraduateList,
         'isPostgraduate': isPostGraduateList,
         'arabicName': mainTitleArabic,
-
-
+        'degree': degreeController.text,
+        'arabicDegree': arabicDegreeController.text,
         'sectionImages': [],
         'sectionDescriptions': [
           mainDescription,
