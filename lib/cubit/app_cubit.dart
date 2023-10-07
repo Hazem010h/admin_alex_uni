@@ -69,12 +69,14 @@ class AppCubit extends Cubit<AppStates> {
   }
 
   createUniversity({
-    required String name,
+    required String englishName,
+    required String arabicName,
   }) {
     emit(CreateUniversityLoadingState());
 
     UniversityModel universityModel = UniversityModel(
-      name: name,
+      englishName: englishName,
+      arabicName: arabicName,
       image: uploadedImageLink,
     );
 
@@ -183,14 +185,11 @@ class AppCubit extends Cubit<AppStates> {
         .get()
         .then((value) {
       value.docs.forEach((element) {
-        DepartmentModel currentDepartment =
-            DepartmentModel.fromJson(element.data());
+        DepartmentModel currentDepartment = DepartmentModel.fromJson(element.data());
         currentDepartment.id = element.id;
-
         departments.add(currentDepartment);
       });
       currentSelectedDepartment = departments[0];
-
       emit(GetDepartmentsSuccessState());
     }).catchError((onError) {
       emit(GetDepartmentsErrorState(onError.toString()));

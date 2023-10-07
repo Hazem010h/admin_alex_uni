@@ -15,7 +15,8 @@ class AddUniversityScreen extends StatefulWidget {
 }
 
 class _AddUniversityScreenState extends State<AddUniversityScreen> {
-  TextEditingController nameController = TextEditingController();
+  TextEditingController englishNameController = TextEditingController();
+  TextEditingController arabicNameController = TextEditingController();
   bool error = false;
 
   @override
@@ -25,7 +26,7 @@ class _AddUniversityScreenState extends State<AddUniversityScreen> {
         if (state is CreateUniversitySuccessState) {
           setState(() {
             AppCubit.get(context).image = null;
-            nameController.clear();
+            englishNameController.clear();
           });
         }
         if(state is AppChangeNavBarState){
@@ -113,9 +114,18 @@ class _AddUniversityScreenState extends State<AddUniversityScreen> {
                     ],
                   ),
                   reusableTextFormField(
-                    label: lang == 'ar' ? 'اسم الجامعة' : 'University Name',
+                    label: lang == 'ar' ? 'اسم الجامعة بالانجليزية' : 'University Name in English',
                     onTap: () {},
-                    controller: nameController,
+                    controller: englishNameController,
+                    keyboardType: TextInputType.text,
+                  ),
+                  const SizedBox(
+                    height: 10.0,
+                  ),
+                  reusableTextFormField(
+                    label: lang=='ar'?'اسم الجامعة بالعربي':'University Name in Arabic',
+                    onTap: () {},
+                    controller: arabicNameController,
                     keyboardType: TextInputType.text,
                   ),
                   const SizedBox(
@@ -142,13 +152,14 @@ class _AddUniversityScreenState extends State<AddUniversityScreen> {
                             label: lang=='ar'?'اضافة':'Add',
                             backColor: defaultColor,
                             function: () {
-                              if (cubit.image != null && nameController.text.isNotEmpty) {
+                              if (cubit.image != null && englishNameController.text.isNotEmpty && arabicNameController.text.isNotEmpty) {
                                 setState(() {
                                   error = false;
                                 });
                                 cubit.uploadImage().then((value) {
                                   cubit.createUniversity(
-                                    name: nameController.text,
+                                    englishName: englishNameController.text,
+                                    arabicName: arabicNameController.text,
                                   );
                                 });
                               } else {
@@ -170,7 +181,7 @@ class _AddUniversityScreenState extends State<AddUniversityScreen> {
                             function: () {
                               setState(() {
                                 cubit.image = null;
-                                nameController.clear();
+                                englishNameController.clear();
                               });
                             },
                           ),

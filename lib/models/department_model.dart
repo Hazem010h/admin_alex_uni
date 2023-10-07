@@ -19,7 +19,6 @@ class DepartmentModel{
   });
 
   DepartmentModel.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
     universityId = json['universityId'];
     name = json['name'];
     departmentImage = json['departmentImage'];
@@ -30,7 +29,6 @@ class DepartmentModel{
 
   Map<String, dynamic> toMap() {
     return {
-      'id': id,
       'universityId': universityId,
       'departmentImage': departmentImage,
       'description': description,

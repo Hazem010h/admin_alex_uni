@@ -160,7 +160,7 @@ class _AddDepartmentScreenState extends State<AddDepartmentScreen> {
                           .map(
                             (e) => DropdownMenuItem(
                               value: e,
-                              child: Text(e.name!),
+                              child: Text(e.englishName!),
                             ),
                           )
                           .toList(),

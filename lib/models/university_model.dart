@@ -1,24 +1,26 @@
 class UniversityModel {
   String? uId;
-  String? name;
+  String? englishName;
+  String? arabicName;
   String? image;
 
   UniversityModel({
-    this.name,
+    this.englishName,
+    this.arabicName,
     this.uId,
     this.image,
   });
 
   UniversityModel.fromJson(Map<String,dynamic>? json){
-    name=json!['name'];
-    uId=json['uId'];
+    englishName=json!['name'];
+    arabicName=json['arabicName'];
     image=json['image'];
   }
 
   Map<String,dynamic> toMap(){
     return {
-      'name':name,
-      'uId':uId,
+      'name':englishName,
+      'arabicName':arabicName,
       'image':image,
     };
   }
