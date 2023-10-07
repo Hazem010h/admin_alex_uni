@@ -71,22 +71,50 @@ class AppCubit extends Cubit<AppStates> {
   createUniversity({
     required String englishName,
     required String arabicName,
-  }) {
+    required File image,
+  }) async {
     emit(CreateUniversityLoadingState());
 
-    UniversityModel universityModel = UniversityModel(
-      englishName: englishName,
-      arabicName: arabicName,
-      image: uploadedImageLink,
-    );
+    String uploadedImageLink = '';
 
-    FirebaseFirestore.instance
+    final universityRef = FirebaseFirestore.instance
         .collection('Universities')
-        .add(universityModel.toMap())
-        .then((value) {
-      getUniversities();
-      emit(CreateUniversitySuccessState());
+        .doc();
+
+    universityRef.set({
+      'isFinished': false,
     });
+
+    final firestore = FirebaseFirestore.instance;
+    final storage = firebase_storage.FirebaseStorage.instance;
+    final storageRef = storage.ref().child(
+        'Universities/${universityRef.id}/${DateTime.now().millisecondsSinceEpoch}');
+    final uploadTask = storageRef.putFile(image);
+
+    final snapshot = await uploadTask;
+
+    if (snapshot.state == firebase_storage.TaskState.success) {
+      final imageUrl = await storageRef.getDownloadURL();
+
+      UniversityModel universityModel = UniversityModel(
+        englishName: englishName,
+        arabicName: arabicName,
+        image: imageUrl,
+      );
+
+      WriteBatch batch = firestore.batch();
+      batch.set(universityRef, {
+        ...universityModel.toMap(),
+        'isFinished': true,
+      });
+      batch.commit().then((value) {
+        getUniversities();
+        emit(CreateUniversitySuccessState());
+      }).catchError((onError) {
+        emit(CreateUniversityErrorState(onError.toString()));
+      });
+
+    }
   }
 
   File? image;
@@ -135,7 +163,7 @@ class AppCubit extends Cubit<AppStates> {
         currentUniversity.uId = element.id;
         universities.add(currentUniversity);
       });
-      currentSelectedUniversity = universities[0];
+      universities.isNotEmpty?currentSelectedUniversity = universities[0]:null;
       displayDepartments();
       emit(GetUniversitiesSuccessState());
     }).catchError((onError) {
@@ -177,6 +205,10 @@ class AppCubit extends Cubit<AppStates> {
     departments = [];
 
     emit(GetDepartmentsLoadingState());
+    if(currentSelectedUniversity==null){
+      emit(GetDepartmentsSuccessState());
+      return;
+    }
     FirebaseFirestore.instance
         .collection('Universities')
         .doc(currentSelectedUniversity!.uId)
@@ -189,7 +221,7 @@ class AppCubit extends Cubit<AppStates> {
         currentDepartment.id = element.id;
         departments.add(currentDepartment);
       });
-      currentSelectedDepartment = departments[0];
+      departments.length>0? currentSelectedDepartment = departments[0]:null;
       emit(GetDepartmentsSuccessState());
     }).catchError((onError) {
       emit(GetDepartmentsErrorState(onError.toString()));

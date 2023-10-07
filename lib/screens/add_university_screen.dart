@@ -27,6 +27,7 @@ class _AddUniversityScreenState extends State<AddUniversityScreen> {
           setState(() {
             AppCubit.get(context).image = null;
             englishNameController.clear();
+            arabicNameController.clear();
           });
         }
         if(state is AppChangeNavBarState){
@@ -156,12 +157,11 @@ class _AddUniversityScreenState extends State<AddUniversityScreen> {
                                 setState(() {
                                   error = false;
                                 });
-                                cubit.uploadImage().then((value) {
                                   cubit.createUniversity(
                                     englishName: englishNameController.text,
                                     arabicName: arabicNameController.text,
+                                    image: cubit.image!,
                                   );
-                                });
                               } else {
                                 setState(() {
                                   error = true;

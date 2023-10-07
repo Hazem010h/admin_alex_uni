@@ -26,7 +26,9 @@ class GetUniversitiesSuccessState extends AppStates {}
 class GetUniversitiesErrorState extends AppStates {
   final String error;
 
-  GetUniversitiesErrorState(this.error);
+  GetUniversitiesErrorState(this.error){
+    print(error);
+  }
 }
 
 class GetDepartmentsLoadingState extends AppStates {}
