@@ -544,7 +544,6 @@ class _AddAdminScreenState extends State<AddAdminScreen> {
                                         password: passwordController.text,
                                         phone: phone!,
                                         email: emailController.text,
-                                        underGraduate: underGraduateCheckbox,
                                         postGraduate: postGraduateCheckbox,
                                       );
                                       setState(() {
@@ -558,7 +557,6 @@ class _AddAdminScreenState extends State<AddAdminScreen> {
                                         password: passwordController.text,
                                         phone: phone!,
                                         email: emailController.text,
-                                        underGraduate: underGraduateCheckbox,
                                         postGraduate: postGraduateCheckbox);
                                     setState(() {
                                       isUploading = true;

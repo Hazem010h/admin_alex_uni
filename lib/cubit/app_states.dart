@@ -143,3 +143,17 @@ class DeleteCommentErrorState extends AppStates{}
 class AppChangeLanguageState extends AppStates{}
 class AppChangeLanguageErrorState extends AppStates{}
 
+class ToggleAvailableLoadingState extends AppStates{}
+
+class ToggleAvailableSuccessState extends AppStates{}
+
+class ToggleAvailableErrorState extends AppStates{}
+
+class ToggleReviewPostsLoadingState extends AppStates{}
+
+class ToggleReviewPostsSuccessState extends AppStates{}
+
+class ToggleReviewPostsErrorState extends AppStates{}
+
+
+

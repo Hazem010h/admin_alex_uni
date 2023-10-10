@@ -6,9 +6,9 @@ class AdminModel{
   String? email;
   String? universityId;
   String? departmentId;
-  bool? underGraduate;
   bool? postGraduate;
   bool? isAvailable;
+  bool? reviewPosts;
   bool? showInDepartment;
 
   AdminModel({
@@ -18,7 +18,6 @@ class AdminModel{
     this.email,
     this.universityId,
     this.departmentId,
-    this.underGraduate,
     this.postGraduate,
     this.isAvailable=false,
     this.showInDepartment=true,
@@ -31,9 +30,9 @@ class AdminModel{
     email=json['email'];
     universityId = json['universityId'];
     departmentId = json['departmentId'];
-    underGraduate = json['underGraduate'];
     postGraduate = json['postGraduate'];
     isAvailable=json['isAvailable'];
+    reviewPosts=json['reviewPosts'];
     showInDepartment=json['showInDepartment'];
   }
 
@@ -45,9 +44,9 @@ class AdminModel{
       'universityId': universityId,
       'departmentId': departmentId,
       'name': name,
-      'underGraduate': underGraduate,
       'postGraduate': postGraduate,
       'isAvailable':isAvailable,
+      'reviewPosts':reviewPosts,
       'showInDepartment':showInDepartment,
     };
   }
