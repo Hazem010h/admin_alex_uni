@@ -156,11 +156,10 @@ class _AddDepartmentScreenState extends State<AddDepartmentScreen> {
                         size: 28,
                       ),
                       value: cubit.currentSelectedUniversity,
-                      items: cubit.universities
-                          .map(
+                      items: cubit.universities.map(
                             (e) => DropdownMenuItem(
                               value: e,
-                              child: Text(e.englishName!),
+                              child: Text(lang=='en'?e.englishName!:e.arabicName!),
                             ),
                           )
                           .toList(),
@@ -244,7 +243,7 @@ class _AddDepartmentScreenState extends State<AddDepartmentScreen> {
                             });
                           },
                         ),
-                         SizedBox(
+                         const SizedBox(
                            width: 30,
                          ),
                          Text(lang=='en'?'Postgraduate':'المرحلة العليا'),
