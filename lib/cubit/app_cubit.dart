@@ -233,7 +233,6 @@ class AppCubit extends Cubit<AppStates> {
     required String password,
     required String phone,
     required String email,
-    required bool underGraduate,
     required bool postGraduate,
   }) {
     emit(AdminRegesterLoadingState());
@@ -249,7 +248,6 @@ class AppCubit extends Cubit<AppStates> {
         name: name,
         email: email,
         phone: phone,
-        underGraduate: underGraduate,
         postGraduate: postGraduate,
       );
       emit(AdminRegesterSuccessState(value.user!.uid));
@@ -276,7 +274,6 @@ class AppCubit extends Cubit<AppStates> {
     required String name,
     required String phone,
     required String email,
-    required bool underGraduate,
     required bool postGraduate,
   }) async {
     emit(CreateAdminLoadingState());
@@ -288,7 +285,6 @@ class AppCubit extends Cubit<AppStates> {
       email: email,
       universityId: currentSelectedUniversity?.uId,
       departmentId: currentSelectedDepartment?.id,
-      underGraduate: underGraduate,
       postGraduate: postGraduate,
     );
 
@@ -639,6 +635,35 @@ class AppCubit extends Cubit<AppStates> {
       emit(DeleteCommentSuccessState());
     }).catchError((error) {
       emit(DeleteCommentErrorState());
+    });
+  }
+
+  toggleAvailableButton(bool value){
+    emit(ToggleAvailableLoadingState());
+    FirebaseFirestore.instance
+        .collection('Admins')
+        .doc(uId)
+        .update({
+      'isAvailable': value,
+    }).then((value) {
+      getAdminData();
+      emit(ToggleAvailableSuccessState());
+    }).catchError((error) {
+      emit(ToggleAvailableErrorState());
+    });
+  }
+  toggleReviewButton(bool value){
+    emit(ToggleReviewPostsLoadingState());
+    FirebaseFirestore.instance
+        .collection('Admins')
+        .doc(uId)
+        .update({
+      'reviewPosts': value,
+    }).then((value) {
+      getAdminData();
+      emit(ToggleReviewPostsSuccessState());
+    }).catchError((error) {
+      emit(ToggleReviewPostsErrorState());
     });
   }
 
