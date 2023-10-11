@@ -32,6 +32,8 @@ class AppCubit extends Cubit<AppStates> {
   UniversityModel? currentSelectedUniversity;
   DepartmentModel? currentSelectedDepartment;
 
+  String homeTitle= lang == 'ar' ? 'الرئيسية' : 'Home';
+
   List<Widget> screens = [
     AddUniversityScreen(),
     AddDepartmentScreen(),
@@ -51,12 +53,7 @@ class AppCubit extends Cubit<AppStates> {
           context,
           newLocale,
         );
-        // titles = [
-        //   lang == 'en' ? 'Home' : 'الرئيسية',
-        //   lang == 'en' ? 'Chat' : 'المحادثات',
-        //   lang == 'en' ? 'Notifications' : 'الاشعارات',
-        //   lang == 'en' ? 'Settings' : 'الاعدادات',
-        // ];
+        homeTitle= lang == 'ar' ? 'الرئيسية' : 'Home';
         emit(AppChangeLanguageState());
       }).catchError((e) {
         emit(AppChangeLanguageErrorState());
@@ -74,8 +71,6 @@ class AppCubit extends Cubit<AppStates> {
     required File image,
   }) async {
     emit(CreateUniversityLoadingState());
-
-    String uploadedImageLink = '';
 
     final universityRef = FirebaseFirestore.instance
         .collection('Universities')

@@ -5,8 +5,6 @@ import 'package:admin_alex_uni/reusable_widgets.dart';
 import 'package:conditional_builder_null_safety/conditional_builder_null_safety.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
-import 'package:intl_phone_field/intl_phone_field.dart';
 import '../cache_helper.dart';
 import '../constants.dart';
 import 'layout_page.dart';
@@ -24,7 +22,6 @@ class _AddAdminScreenState extends State<AddAdminScreen> {
   TextEditingController passwordController = TextEditingController();
   TextEditingController phoneController = TextEditingController();
   bool isUploading = false;
-  String? phone;
   bool error = false;
   bool underGraduateCheckbox = false;
   bool postGraduateCheckbox = false;
@@ -228,24 +225,11 @@ class _AddAdminScreenState extends State<AddAdminScreen> {
                         const SizedBox(
                           height: 5,
                         ),
-                        IntlPhoneField(
-                          style: const TextStyle(
-                            color: Colors.black,
-                          ),
-                          decoration: const InputDecoration(
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.all(
-                                Radius.circular(25),
-                              ),
-                              borderSide: BorderSide(
-                                color: Colors.black,
-                              ),
-                            ),
-                          ),
-                          initialCountryCode: 'EG',
-                          onChanged: (data) {
-                            phone = data.completeNumber;
-                          },
+                        reusableTextFormField(
+                          label: lang == 'en' ? 'Phone' : 'رقم الهاتف',
+                          onTap: () {},
+                          controller: phoneController,
+                          keyboardType: TextInputType.phone,
                         ),
                         Row(
                           children: [
@@ -256,7 +240,7 @@ class _AddAdminScreenState extends State<AddAdminScreen> {
                                 lang == 'en'
                                     ? 'University Name'
                                     : 'اسم الجامعه',
-                                style: TextStyle(
+                                style: const TextStyle(
                                   fontSize: 16.0,
                                   fontWeight: FontWeight.bold,
                                 ),
@@ -307,8 +291,7 @@ class _AddAdminScreenState extends State<AddAdminScreen> {
                             },
                           ),
                         ),
-                        if (universityError !=
-                            null) // Display error message if no university is selected
+                        if (universityError != null)
                           Text(
                             universityError!,
                             style: const TextStyle(
@@ -517,8 +500,7 @@ class _AddAdminScreenState extends State<AddAdminScreen> {
                                       });
                                     }
 
-                                    if (phoneController.text.isEmpty ||
-                                        phone == '') {
+                                    if (phoneController.text.isEmpty ) {
                                       setState(() {
                                         phoneError = lang == 'en'
                                             ? 'Phone is required'
@@ -527,8 +509,6 @@ class _AddAdminScreenState extends State<AddAdminScreen> {
                                     } else {
                                       setState(() {
                                         phoneError = null;
-                                        phone = phoneController
-                                            .text; // Assign the value to the 'phone' variable
                                       });
                                     }
 
@@ -542,7 +522,7 @@ class _AddAdminScreenState extends State<AddAdminScreen> {
                                       cubit.AdminRegester(
                                         name: nameController.text,
                                         password: passwordController.text,
-                                        phone: phone!,
+                                        phone: phoneController.text,
                                         email: emailController.text,
                                         underGraduate: underGraduateCheckbox,
                                         postGraduate: postGraduateCheckbox,
@@ -550,20 +530,17 @@ class _AddAdminScreenState extends State<AddAdminScreen> {
                                       setState(() {
                                         isUploading = true;
                                       });
-                                      print('${nameController.text}');
                                     }
-
                                     cubit.AdminRegester(
                                         name: nameController.text,
                                         password: passwordController.text,
-                                        phone: phone!,
+                                        phone: phoneController.text,
                                         email: emailController.text,
                                         underGraduate: underGraduateCheckbox,
                                         postGraduate: postGraduateCheckbox);
                                     setState(() {
                                       isUploading = true;
                                     });
-                                    print('${nameController.text}');
                                   },
                                 ),
                               ),

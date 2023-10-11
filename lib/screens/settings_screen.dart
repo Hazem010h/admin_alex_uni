@@ -1,11 +1,10 @@
 import 'package:admin_alex_uni/constants.dart';
 import 'package:admin_alex_uni/cubit/app_cubit.dart';
 import 'package:admin_alex_uni/cubit/app_states.dart';
-
+import 'package:admin_alex_uni/reusable_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_switch/flutter_switch.dart';
-import 'package:intl_phone_field/intl_phone_field.dart';
 
 class SettingScreen extends StatefulWidget {
   SettingScreen({super.key});
@@ -16,7 +15,6 @@ class SettingScreen extends StatefulWidget {
 
 class _SettingScreenState extends State<SettingScreen> {
   TextEditingController phoneController = TextEditingController();
-  String? phone;
   bool value = false;
   bool available = false;
 
@@ -34,6 +32,9 @@ class _SettingScreenState extends State<SettingScreen> {
         if (state is UpdateUserDataSuccessState) {
           Navigator.pop(context);
         }
+        if (state is GetSettingsSuccessState) {
+          value = AppCubit.get(context).settings!.reviewPosts!;
+        }
       },
       builder: (context, state) {
         AppCubit cubit = AppCubit.get(context);
@@ -44,18 +45,19 @@ class _SettingScreenState extends State<SettingScreen> {
             actions: [
               IconButton(
                 onPressed: () async {
-                  // Update user data
-                  cubit.updateUserData(phone: phone!, available: available);
-
-                  // Update settings
-                  cubit.updateSettings(reviewPosts: value);
-
-                  // Change app language instantly
-                  await cubit.changeAppLanguage(
-                    context: context,
-                    newLocale:
-                        lang == 'en' ? const Locale('ar') : const Locale('en'),
-                  );
+                  if (phoneController.text.isNotEmpty) {
+                    cubit.updateUserData(
+                      phone: phoneController.text,
+                      available: available,
+                    );
+                    cubit.updateSettings(reviewPosts: value);
+                    await cubit.changeAppLanguage(
+                      context: context,
+                      newLocale: lang == 'en'
+                          ? const Locale('ar')
+                          : const Locale('en'),
+                    );
+                  }
                 },
                 icon: const Icon(Icons.check),
               ),
@@ -66,25 +68,11 @@ class _SettingScreenState extends State<SettingScreen> {
             child: SingleChildScrollView(
               child: Column(
                 children: [
-                  IntlPhoneField(
+                  reusableTextFormField(
+                    label: lang == 'en' ? 'Phone' : 'الهاتف',
+                    onTap: () {},
                     controller: phoneController,
-                    style: const TextStyle(
-                      color: Colors.black,
-                    ),
-                    decoration: const InputDecoration(
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.all(
-                          Radius.circular(20),
-                        ),
-                        borderSide: BorderSide(
-                          color: Colors.black,
-                        ),
-                      ),
-                    ),
-                    initialCountryCode: 'EG',
-                    onChanged: (data) {
-                      phone = data.completeNumber;
-                    },
+                    keyboardType: TextInputType.phone,
                   ),
                   const SizedBox(
                     height: 20,
@@ -102,7 +90,8 @@ class _SettingScreenState extends State<SettingScreen> {
                       Switch(
                           value: value,
                           onChanged: (val) {
-                            setState(() {
+                            setState(
+                              () {
                                 value = val;
                               },
                             );
